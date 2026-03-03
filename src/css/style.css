@@ -94,12 +94,22 @@ section{
 
 .weatherInfos aside{
   height: 400px;
+  padding: 20px;
 }
 
 .weatherInfos .left{
   width: 30%;
   background-color: purple;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
 }
+
+.weatherInfos .left .imgContainer{
+  height: 100px;
+}
+
 
 .weatherInfos .right{
   width: 60%;
