@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,400;0,600;0,700;0,800;1,900&display=swap');
+
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  list-style: none;
+  font-family: 'Poppins', sans-serif;
+}
+
+body{
+  background-image: url(/src/imagens/sky.png);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; 
+  min-height: 100vh;
+}
+
+main{
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#first {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+#texto {
+  color: black;
+  text-align: center;
+
+  margin-top: 120px;
+  background: rgba(255, 400, 400, 0.4); 
+  backdrop-filter: blur(12px);      
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 20px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  max-width: 1800px;
+}
+
+#texto h1 {
+  font-size: 20px;
+  margin-bottom: 7px;
+  font-weight: 700;
+}
+
+#texto h2 {
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 40px;
+  opacity: 0.8;
+}
+
+#texto p {
+  margin-top: 20px;
+  font-size: 18px;
+  line-height: 1.8; 
+  margin-bottom: 25px;
+  text-align: justify; 
+}
