@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,400;0,600;0,700;0,800;1,900&display=swap');
 
 
-*{
+* {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -10,7 +10,14 @@
   font-family: 'Poppins', sans-serif;
 }
 
-main{
+body {
+  background-image: url(/src/imagens/background.png);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+main {
   padding: 40px;
   display: flex;
   justify-content: center;
@@ -18,7 +25,7 @@ main{
   flex-direction: column;
 }
 
-nav{
+nav {
   width: 100%;
   height: 90px;
   padding: 6px 40px;
@@ -27,32 +34,37 @@ nav{
   align-items: center;
 }
 
-nav ul{
+nav ul {
   display: flex;
   gap: 30px;
 }
 
-nav ul li{
+nav ul li {
   cursor: pointer;
   font-weight: 600;
   transition: .4s;
   font-size: 1.2rem;
 }
 
-nav ul li::after{
+nav ul li a{
+  color: white;
+  text-decoration: none;
+}
+
+nav ul li::after {
   content: '';
   display: block;
   width: 10%;
   height: 2px;
-  background-color: rgb(99, 99, 180);
+  background-color: rgb(126, 158, 199);
   transition: .4s;
 }
 
-nav ul li:hover::after{
+nav ul li:hover::after {
   width: 80%;
 }
 
-section{
+section {
   padding: 50px;
   display: flex;
   justify-content: center;
@@ -62,7 +74,7 @@ section{
   width: 80%;
 }
 
-#first{
+#first {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -71,11 +83,12 @@ section{
   height: 30vh;
 }
 
-#first p:last-child{
+#first p:last-child {
   font-size: 150%;
+  color: white;
 }
 
-#first p:first-child{
+#first p:first-child {
   font-size: 300%;
   color: rgb(13, 13, 162);
 
@@ -91,27 +104,27 @@ section{
   gap: 100px;
 }
 
-.weatherTopInfos li{
+.weatherTopInfos li {
   font-size: 1.8rem;
 }
 
-.weatherTopInfos input{
-background-color: aliceblue;
-border: none;
-border-radius: 1rem;
-width: 30rem;
-height: 3rem;
-padding-left: 30px;
+.weatherTopInfos input {
+  background-color: aliceblue;
+  border: none;
+  border-radius: 1rem;
+  width: 30rem;
+  height: 3rem;
+  padding-left: 30px;
 }
 
-.weatherTopInfos input:focus{
+.weatherTopInfos input:focus {
   outline: none;
 }
 
-.weatherTopInfos input::placeholder{
+.weatherTopInfos input::placeholder {
   color: rgb(80, 80, 80);
   font-size: 1rem;
-  
+
 }
 
 .weatherTopInfos li:nth-child(2) {
@@ -119,7 +132,7 @@ padding-left: 30px;
 
 }
 
-.weatherInfos{
+.weatherInfos {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -127,51 +140,70 @@ padding-left: 30px;
   width: 100%;
 }
 
-.weatherInfos aside{
+.weatherInfos aside {
   height: 400px;
   padding: 20px;
 }
 
-.weatherInfos .left{
-  width: 30%;
-  background-color: rgb(13, 13, 162);
+.weatherInfos .left {
+  width: 35%;
+  background-color: rgb(53, 106, 175);
   display: flex;
   justify-content: center;
-  align-items: start;
+  align-items: center;
   flex-direction: column;
   border-radius: 1.5em;
 }
 
-.weatherInfos .left .imgContainer{
-  height: 100px;
+.weatherInfos .left .imgContainer {
+  height: 200px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
 }
 
-.weatherInfos .left h1, .weatherInfos ul li{
+.weatherInfos .left .imgContainer img{
+  max-width: 500px;
+}
+
+.weatherInfos .left .imgContainer .mainTemperature{
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+   color: white;
+}
+
+.weatherInfos .left .imgContainer .mainClock{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.weatherInfos .left h1,
+.weatherInfos ul li {
   color: aliceblue;
 }
 
-.weatherSpecs{
-  margin-top: 20%;
+.weatherSpecs {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 10px;
 }
 
-.weatherInfos .right{
+.weatherSpecs li {
+  background-color: rgb(90, 147, 193);
+  padding: 10px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: .8rem;
+  height: 60px;
+  width: 120px;
+}
+
+.weatherInfos .right {
   width: 60%;
   background-color: rgb(13, 13, 162);
   border-radius: 1.5em;
-}
-
-nav a {
-  color: black;
-  text-decoration: none;
-}
-
-nav a:visited {
-  color: black;
-}
-
-body{
-  background-image: url(/src/imagens/background.png);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
 }

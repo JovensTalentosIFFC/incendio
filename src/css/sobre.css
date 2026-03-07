@@ -123,10 +123,6 @@ nav ul li:hover::after{
 }
 
 nav a {
-  color: black;
+  color: white;
   text-decoration: none;
-}
-
-nav a:visited {
-  color: black;
 }
