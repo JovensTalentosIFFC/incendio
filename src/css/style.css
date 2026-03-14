@@ -10,11 +10,26 @@
   font-family: 'Poppins', sans-serif;
 }
 
+:root{
+  --main-color: #4157c7;
+  --second-color: #919ee3;
+  --accent: #6679de;
+
+}
+
 body {
   background-image: url(/src/imagens/background.png);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+}
+/* fundo ficar escuro no body */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3); /* escurece o fundo */
+  z-index: -1;
 }
 
 main {
@@ -32,6 +47,8 @@ nav {
   display: flex;
   justify-content: start;
   align-items: center;
+  position: fixed;
+  top: 0;
 }
 
 nav ul {
@@ -65,13 +82,12 @@ nav ul li:hover::after {
 }
 
 section {
-  padding: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   gap: 40px;
-  width: 80%;
+  width: 1200px;
 }
 
 #first {
@@ -80,7 +96,7 @@ section {
   align-items: center;
   flex-direction: column;
   gap: 20px;
-  height: 30vh;
+  height: 40vh;
 }
 
 #first p:last-child {
@@ -90,14 +106,15 @@ section {
 
 #first p:first-child {
   font-size: 300%;
-  color: rgb(13, 13, 162);
+  color: var(--main-color);
 
 }
 
 .weatherTopInfos {
   display: flex;
   align-items: center;
-  width: 92%;
+  justify-content: center;
+  width: 100%;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -106,6 +123,7 @@ section {
 
 .weatherTopInfos li {
   font-size: 1.8rem;
+  color: white;
 }
 
 .weatherTopInfos input {
@@ -124,13 +142,8 @@ section {
 .weatherTopInfos input::placeholder {
   color: rgb(80, 80, 80);
   font-size: 1rem;
-
 }
 
-.weatherTopInfos li:nth-child(2) {
-  margin-left: auto;
-
-}
 
 .weatherInfos {
   display: flex;
@@ -146,8 +159,8 @@ section {
 }
 
 .weatherInfos .left {
-  width: 35%;
-  background-color: rgb(53, 106, 175);
+  width: 40%;
+  background-color: var(--accent);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -155,8 +168,15 @@ section {
   border-radius: 1.5em;
 }
 
+.weatherInfos .right {
+  width: 60%;
+  background-color: var(--second-color);
+  border-radius: 1.5em;
+}
+
+
 .weatherInfos .left .imgContainer {
-  height: 200px;
+  height: 180px;
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -197,13 +217,50 @@ section {
   padding: 10px;
   text-align: center;
   border-radius: 10px;
-  font-size: .8rem;
-  height: 60px;
-  width: 120px;
+  font-size: .9rem;
+  height: 70px;
+  width: 140px;
 }
 
-.weatherInfos .right {
-  width: 60%;
-  background-color: rgb(13, 13, 162);
-  border-radius: 1.5em;
+@media (max-width: 1264px){
+  section{
+    width: 100%;
+  }
+
+ .weatherInfos{
+  flex-direction: column;
+ }
+
+ .weatherInfos .left{
+  width: 80%;
+ }
+
+ .weatherInfos .right{
+  width: 80%;
+ }
+
+ .weatherInfos .left .weatherSpecs{
+  width: 100%;
+ }
+
+ .weatherInfos .left .weatherSpecs li{
+  width: 100%;
+ }
+ 
+ .weatherInfos .left .imgContainer img{
+    max-width: 1200px;
+  }
+
+  .weatherTopInfos{
+    gap: 50px;
+  }
+
+  .weatherTopInfos li{
+    font-size: 1.4rem;
+  }
+
+  .weatherTopInfos input{
+    width: 90%;
+  }
+
 }
