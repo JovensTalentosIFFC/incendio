@@ -264,3 +264,11 @@ section {
   }
 
 }
+
+.weatherInfos .right .containerInput{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px;
+  margin-top: 160px;
+}
