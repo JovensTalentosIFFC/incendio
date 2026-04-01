@@ -171,7 +171,10 @@ section {
 .weatherInfos .right {
   width: 60%;
   background-color: var(--second-color);
-  border-radius: 1.5em;
+  border-top-left-radius: 1.5em;
+  border-bottom-left-radius: 1.5em;
+  border-top-right-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
 }
 
 
@@ -269,8 +272,61 @@ section {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 20px;
-  margin-top: 50px;
+  padding: 0;
+  margin-top: 0;
   flex-direction: column;
   gap: 20px;
+  color: white;
+}
+
+#grafico {
+  width: 300px;
+  height: 150px;
+}
+
+.containerInput #csv{
+  display: none;
+}
+
+#nomeArquivo{
+  font-weight: 300 !important;
+  font-style: normal;
+  margin-bottom: 40px;
+}
+
+#btnImportar{
+  border-bottom: 3px solid white;
+  border-left: 3px solid white;
+  border-right: none; 
+  border-top: none;
+  padding: 8px 15px;
+  color: white;
+  background-color: rgb(90, 147, 193);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#btnImportar:hover {
+  border-bottom-width: 4px; 
+  border-left-width: 4px; 
+}
+
+#btnImportar:active {
+  border-bottom-width: 2px; /* ainda maior */
+  border-left-width: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;  
+  height: 3px;  
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #007bff; 
+  border-radius: 1.5em;    
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f0f0f0; 
+  border-radius: 1.5em;
 }

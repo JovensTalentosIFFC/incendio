@@ -39,7 +39,24 @@ const h1Clock = document.querySelector('.weatherInfos .left .imgContainer .mainC
 
 // botão importar
 const btnImportar = document.getElementById("btnImportar");
-btnImportar.addEventListener("click", loadCsv);
+const csv = document.getElementById("csv");
+
+// Faz o botão abrir o seletor de arquivo
+btnImportar.addEventListener("click", () => {
+  csvInput.click();   // abre a janela do arquivo
+});
+
+// Atualiza o span com o nome do arquivo selecionado
+csvInput.addEventListener("change", () => {
+  if (csvInput.files.length > 0) {
+    nomeArquivo.textContent = csvInput.files[0].name;
+  } else {
+    nomeArquivo.textContent = "Nenhum arquivo selecionado";
+  }
+});
+
+// Continua chamando sua função para ler o CSV quando o arquivo for selecionado
+csvInput.addEventListener("change", loadCsv);
 
 // chama quando clicar no botão importar
 function loadCsv() {
@@ -122,10 +139,9 @@ function detectarIncendio(registros) {
 }
 
 function criarGrafico(registros) {
-
   const labels = registros.map(r => {
     const d = new Date(r.timestamp_unix * 1000);
-    return d.getHours() + ":" + d.getMinutes();
+    return d.getHours() + ":" + String(d.getMinutes()).padStart(2, '0');
   });
 
   const temperaturas = registros.map(r => r.temperature_c);
@@ -138,21 +154,41 @@ function criarGrafico(registros) {
     data: {
       labels,
       datasets: [
-        {
-          label: "Temperatura",
-          data: temperaturas
-        },
-        {
-          label: "🔥 Incêndio",
-          data: incendios,
-          borderDash: [5,5]
-        }
+        { label: "Temperatura", data: temperaturas, borderWidth: 0.1 },
+        { label: "🔥 Incêndio", data: incendios, borderDash: [5,5], borderWidth: 0.1 }
       ]
+    },
+    options: {
+      plugins: {
+        legend: {
+          labels: { color: 'black' }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: 'black' },
+          title: {
+            display: true,
+            text: 'Horário',
+            color: 'black',
+            font: { size: 14 }
+          }
+        },
+        y: {
+          ticks: { color: 'black' },
+          title: {
+            display: true,
+            text: 'Temperatura (°C)',
+            color: 'black',
+            font: { size: 14 }
+          }
+        }
+      }
     }
   });
 }
 
-// inicia a API só uma vez
+// Chama a API **somente no início**, fora do criarGrafico
 start();
 
 console.log(values.registros);
