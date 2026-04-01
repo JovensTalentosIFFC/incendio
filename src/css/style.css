@@ -270,5 +270,7 @@ section {
   justify-content: space-around;
   align-items: center;
   padding: 20px;
-  margin-top: 160px;
+  margin-top: 50px;
+  flex-direction: column;
+  gap: 20px;
 }
