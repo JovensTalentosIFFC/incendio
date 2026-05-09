@@ -127,7 +127,13 @@ function detectarIncendio(registros) {
 
     let incendio = false;
 
-    if (r.temperature_c > 35 && r.humidity_pct < 30) {
+    // Condição de risco ambiental
+    if (r.temperature_c >= 30 && r.humidity_pct <= 30) {
+      incendio = true;
+    }
+
+    // Temperaturas típicas de incêndio real
+    if (r.temperature_c >= 100) {
       incendio = true;
     }
 
@@ -139,55 +145,149 @@ function detectarIncendio(registros) {
 }
 
 function criarGrafico(registros) {
+
   const labels = registros.map(r => {
     const d = new Date(r.timestamp_unix * 1000);
     return d.getHours() + ":" + String(d.getMinutes()).padStart(2, '0');
   });
 
   const temperaturas = registros.map(r => r.temperature_c);
-  const incendios = registros.map(r => r.incendio ? 40 : null);
+
+  // marca apenas onde existe incêndio
+  const incendios = registros.map(r =>
+    r.incendio ? r.temperature_c : null
+  );
 
   const ctx = document.getElementById("grafico").getContext("2d");
 
-  new Chart(ctx, {
+  // evita criar gráfico duplicado
+  if (window.graficoIncendio) {
+    window.graficoIncendio.destroy();
+  }
+
+  window.graficoIncendio = new Chart(ctx, {
+
     type: 'line',
+
     data: {
       labels,
+
       datasets: [
-        { label: "Temperatura", data: temperaturas, borderWidth: 0.1 },
-        { label: "🔥 Incêndio", data: incendios, borderDash: [5,5], borderWidth: 0.1 }
+
+        // linha principal
+        {
+          label: "Temperatura (°C)",
+          data: temperaturas,
+
+          borderColor: "#2563eb",
+          backgroundColor: "rgba(37, 99, 235, 0.15)",
+
+          fill: true,
+          tension: 0.4,
+          borderWidth: 3,
+
+          pointRadius: 2,
+          pointHoverRadius: 6
+        },
+
+        // pontos de incêndio
+        {
+          label: "🔥 Risco de Incêndio",
+          data: incendios,
+
+          borderColor: "#dc2626",
+          backgroundColor: "#dc2626",
+
+          pointRadius: 6,
+          pointHoverRadius: 8,
+
+          showLine: false
+        }
       ]
     },
+
     options: {
-      plugins: {
-        legend: {
-          labels: { color: 'black' }
-        }
+
+      responsive: true,
+      maintainAspectRatio: false,
+
+      interaction: {
+        mode: 'index',
+        intersect: false
       },
-      scales: {
-        x: {
-          ticks: { color: 'black' },
-          title: {
-            display: true,
-            text: 'Horário',
-            color: 'black',
-            font: { size: 14 }
+
+      plugins: {
+
+        legend: {
+          labels: {
+            color: "#111",
+            font: {
+              size: 13,
+              weight: 'bold'
+            }
           }
         },
-        y: {
-          ticks: { color: 'black' },
+
+        tooltip: {
+          backgroundColor: "#111827",
+          padding: 12,
+          titleFont: {
+            size: 14
+          },
+          bodyFont: {
+            size: 13
+          }
+        }
+      },
+
+      scales: {
+
+        x: {
+          grid: {
+            color: "rgba(0,0,0,0.05)"
+          },
+
+          ticks: {
+            color: "#333"
+          },
+
           title: {
             display: true,
-            text: 'Temperatura (°C)',
-            color: 'black',
-            font: { size: 14 }
+            text: "Horário",
+            color: "#111",
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
+          }
+        },
+
+        y: {
+
+          beginAtZero: true,
+
+          grid: {
+            color: "rgba(0,0,0,0.05)"
+          },
+
+          ticks: {
+            color: "#333"
+          },
+
+          title: {
+            display: true,
+            text: "Temperatura (°C)",
+            color: "#111",
+            font: {
+              size: 14,
+              weight: 'bold'
+            }
           }
         }
       }
     }
   });
 }
-
 // Chama a API **somente no início**, fora do criarGrafico
 start();
 
