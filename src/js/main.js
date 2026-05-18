@@ -14,7 +14,7 @@ const fetchAPI = async () =>{
 
 const start = async () =>{
   await fetchAPI()
-
+  
   h1Temp.textContent = Math.floor(data.main.temp) + ' °C'
 
   let date = new Date(data.dt*1000)
