@@ -11,14 +11,13 @@
 }
 
 :root{
-  --main-color: #4157c7;
+  --main-color: #1f3ac4;
   --second-color: #919ee3;
   --accent: #6679de;
-
 }
 
 body {
-  background-image: url(/src/imagens/background.png);
+  background-image: url(/src/assets/imgs/background.png);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -107,7 +106,6 @@ section {
 #first p:first-child {
   font-size: 300%;
   color: var(--main-color);
-
 }
 
 .weatherTopInfos {
