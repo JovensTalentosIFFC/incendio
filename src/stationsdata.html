@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crie Sua Estação</title>
-  <script src="./js/stations.js" defer></script>
+  <script src="./js/stationsdata.js" defer></script>
   <style>
     body {
         margin: 0;
@@ -78,6 +78,7 @@ body::before {
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
+
     input:focus,
     textarea:focus,
     select:focus {
@@ -109,37 +110,19 @@ body::before {
     <p>Adicione as informações da sua estação meteorológica.</p>
     <form>
       <div class="field-group">
-        <label for="station-id">ID da Estação</label>
-        <input type="text" id="station-id" name="station-id" >
+        <label for="station-id">Latitude</label>
+        <input type="number" id="latitudeInput">
       </div>
       <div class="field-group">
-        <label for="time-stamp">Time Stamp</label>
-        <input type="text" id="time-stamp" name="time-stamp"  />
+        <label for="time-stamp">Longitude</label>
+        <input type="number" id="longitudeInput" />
       </div>
         <div class="field-group">
-            <label for="time-zone">Time Zone</label>
-            <input type="text" id="time-zone" name="time-zone">
+            <label for="time-zone">Time Zone (unix)</label>
+            <input type="number" id="timeZoneInput" name="time-zone">
       </div>
-         <div class="field-group">
-                <label for="temperature">Temperatura</label>
-                <input type="text" id="temperature" name="temperature">
-        </div>
-        <div class="field-group">
-        <label for="humidity">Humidade</label>
-        <input type="text" id="humidity" name="humidity"  />
-      </div>
-      <div class="field-group">
-        <label for="pressure">Pressão</label>
-        <input type="text" id="pressure" name="pressure"  />
-      </div>
-      <div class="field-group">
-        <label for="wind-speed">Velocidade do Vento</label>
-        <input type="text" id="wind-speed" name="wind-speed" />
-      </div>
-      <div class="field-group">
-        <label for="wind-direction">Direção do Vento</label>
-        <input type="text" id="wind-direction" name="wind-direction" />
-      </div>
+        
+      
       <button type="submit" class="submit-btn">Enviar</button>
     </form>
   </main>
