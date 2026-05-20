@@ -101,3 +101,15 @@ section {
 #first h1{
   color: var(--main-color);
 }
+
+button{
+  width: 200px;
+  height: 50px;
+  background-color: var(--main-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: .4s;
+  text-align: center;
+}

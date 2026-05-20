@@ -10,3 +10,11 @@ source.onmessage = (event) => {
 source.onerror = (error) => {
     console.error("Erro no SSE:", error);
 };
+
+document.getElementById("criar").addEventListener("click", () => {
+  window.location.href = "stationsdata.html";
+});
+
+document.getElementById("submit").addEventListener("click", () => {
+  window.location.href = "stations.html";
+});

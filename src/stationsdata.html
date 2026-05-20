@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crie Sua Estação</title>
+  <script src="./js/stations.js" defer></script>
+  <style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+        background-image: url(/src/assets/imgs/background.png);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+
+         display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        color: #4a3f35;
+}
+
+/* fundo ficar escuro no body */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3); /* escurece o fundo */
+  z-index: -1;
+}
+
+    .form-card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 30px;
+      box-shadow: 0 12px 30px rgba(112, 85, 86, 0.22);
+      padding: 32px;
+      width: min(820px, 90vw);
+      text-align: center;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      margin-top: 80px;
+    }
+
+    .form-card h1 {
+      margin: 0 0 18px;
+      font-size: 1.9rem;
+    }
+
+    .form-card p {
+      margin: 0 0 28px;
+      color: #738da2;
+      line-height: 1.5;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    label {
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 14px 0px;
+      border-radius: 16px;
+      border: 1px solid #1f3ac4;
+      background: #bbc4cfa8;
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #1f3ac4;
+      box-shadow: 0 0 0 4px rgba(234, 127, 146, 0.14);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .submit-btn {
+      background: #1f3ac4;
+      border: none;
+      color: white;
+      font-weight: 700;
+      padding: 15px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+  <main class="form-card">
+    <h1>Crie Sua Estação</h1>
+    <p>Adicione as informações da sua estação meteorológica.</p>
+    <form>
+      <div class="field-group">
+        <label for="station-id">ID da Estação</label>
+        <input type="text" id="station-id" name="station-id" >
+      </div>
+      <div class="field-group">
+        <label for="time-stamp">Time Stamp</label>
+        <input type="text" id="time-stamp" name="time-stamp"  />
+      </div>
+        <div class="field-group">
+            <label for="time-zone">Time Zone</label>
+            <input type="text" id="time-zone" name="time-zone">
+      </div>
+         <div class="field-group">
+                <label for="temperature">Temperatura</label>
+                <input type="text" id="temperature" name="temperature">
+        </div>
+        <div class="field-group">
+        <label for="humidity">Humidade</label>
+        <input type="text" id="humidity" name="humidity"  />
+      </div>
+      <div class="field-group">
+        <label for="pressure">Pressão</label>
+        <input type="text" id="pressure" name="pressure"  />
+      </div>
+      <div class="field-group">
+        <label for="wind-speed">Velocidade do Vento</label>
+        <input type="text" id="wind-speed" name="wind-speed" />
+      </div>
+      <div class="field-group">
+        <label for="wind-direction">Direção do Vento</label>
+        <input type="text" id="wind-direction" name="wind-direction" />
+      </div>
+      <button type="submit" class="submit-btn">Enviar</button>
+    </form>
+  </main>
+</body>
+</html>
