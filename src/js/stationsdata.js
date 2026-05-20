@@ -28,12 +28,14 @@ submitBtn.addEventListener("click", (e) => {
   const stationId = generateStationId(parseFloat(lat), parseFloat(lon));
 
   const stationData = {
-    stationId,
-    timeZone: parseInt(tz),
-    timestamp: Math.floor(Date.now() / 1000),
-  };
+  stationId,
+  timeZone: parseInt(tz),
+  timestamp: Math.floor(Date.now() / 1000),
+};
 
-  localStorage.setItem('station', JSON.stringify(stationData));
+  const existing = JSON.parse(localStorage.getItem('stations') || '[]');
+  existing.push(stationData);
+  localStorage.setItem('stations', JSON.stringify(existing));
 
-  window.location.href = "stations.html";
+window.location.href = "stations.html";
 });
