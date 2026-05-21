@@ -23,10 +23,6 @@ let stations;
 function renderStations() {
   stations = JSON.parse(localStorage.getItem('stations') || '[]');
 
-  if (stations.length === 0) {
-    stationsList.innerHTML = '<p>Nenhuma estação cadastrada.</p>';
-    return;
-  }
 
   stationsList.innerHTML = '';
 

@@ -95,7 +95,7 @@ section {
   align-items: center;
   flex-direction: column;
   gap: 20px;
-  height: 40vh;
+  margin-top: 150px;
 }
 
 #first h1{

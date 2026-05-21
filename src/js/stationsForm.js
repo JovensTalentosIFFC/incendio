@@ -8,7 +8,7 @@ function generateStationId(lat, lon) {
   const lonDir = lon >= 0 ? 'E' : 'W';
 
   const latFormatted = Math.abs(lat).toFixed(4).replace('.', '').padStart(6, '0');
-  const lonFormatted = Math.abs(lon).toFixed(4).replace('.', '').padStart(7, '0');
+  const lonFormatted = Math.abs(lon).toFixed(4).replace('.', '').padStart(6, '0');
 
   return `${latDir}${latFormatted}${lonDir}${lonFormatted}`;
 }
@@ -53,7 +53,7 @@ function validateInputs(lat, lon, tz) {
   return true;
 }
 
-submitBtn.addEventListener("click", (e) => {
+submitBtn.addEventListener("click", async (e) => {
   e.preventDefault();
 
   const lat = latitudeInput.value.trim();
@@ -73,6 +73,12 @@ submitBtn.addEventListener("click", (e) => {
   const existing = JSON.parse(localStorage.getItem('stations') || '[]');
   existing.push(stationData);
   localStorage.setItem('stations', JSON.stringify(existing));
+
+  await fetch('http://localhost:8080/stations/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stationId, timeZone: parseInt(tz), timestamp: Math.floor(Date.now() / 1000) })
+  });
 
   window.location.href = "stations.html";
 });
