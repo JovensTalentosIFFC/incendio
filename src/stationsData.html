@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/stations.css">
+  <title>Criar estação</title>
+  <script src="./js/stationsData.js" defer></script>
+  <style>
+    .stationCard:hover{
+      transform: translateY(0);
+      box-shadow: 0px, 0px, 0px, rgba(0, 0, 0, 0);
+    }
+
+    .stationCard{
+      cursor: default;
+      height: 500px;
+      width: 400px;
+      justify-content: flex-start;
+    }
+
+    #first{
+      height: 200px;
+    }
+
+    .stationCard p{
+      font-weight: 700;
+      font-size: 1.2em;
+    }
+
+    .stationCard span{
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="index.html">Início</a></li>
+      <li><a href="stations.html">Sua estação</a></li>
+      <li><a href="sobre.html">Sobre</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="first">
+      <h1>Estação</h1>
+   
+      
+    </section>
+    <section id="second">
+      <div class="stationCard">
+        <p>Latitude: <span class="latitude"></span></p>
+        <p>Longitude <span class="longitude"></span></p>
+        
+      </div>
+    </section>
+  </main>
+</body>
+</html>

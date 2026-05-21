@@ -15,13 +15,13 @@ const createStationButton = document.querySelector('#criar');
 
 createStationButton.addEventListener("click", (e) => {
   e.preventDefault();
-  window.location.href = "stationsdata.html";
+  window.location.href = "stationsForm.html";
 });
 
 const stationsList = document.querySelector('.stationsManager');
-
+let stations;
 function renderStations() {
-  const stations = JSON.parse(localStorage.getItem('stations') || '[]');
+  stations = JSON.parse(localStorage.getItem('stations') || '[]');
 
   if (stations.length === 0) {
     stationsList.innerHTML = '<p>Nenhuma estação cadastrada.</p>';
@@ -39,3 +39,13 @@ function renderStations() {
 }
 
 renderStations();
+
+document.addEventListener('click', e =>{
+  for(let station of stations){
+    if(station.stationId == e.target.closest('.stationCard').querySelector('.stationId').textContent){
+      localStorage.setItem('currentStation', JSON.stringify(station));
+      window.location.href = 'stationsData.html';
+    }
+  }
+  // localStorage.setItem('currentStation', JSON.stringify(station))
+})
