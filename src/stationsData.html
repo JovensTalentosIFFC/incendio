@@ -3,34 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./css/stations.css">
+  <link rel="stylesheet" href="./css/style.css">
   <title>Criar estação</title>
   <script src="./js/stationsData.js" defer></script>
   <style>
-    .stationCard:hover{
-      transform: translateY(0);
-      box-shadow: 0px, 0px, 0px, rgba(0, 0, 0, 0);
-    }
+    .weatherSpecs {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* ocupa o espaço disponível */
+  gap: 10px;
+  width: 100%;
+}
 
-    .stationCard{
-      cursor: default;
-      height: 500px;
-      width: 400px;
-      justify-content: flex-start;
-    }
+.weatherSpecs li {
+  background-color: rgb(90, 147, 193);
+  padding: 10px;
+  text-align: center;
+  border-radius: 10px;
+  font-size: .9rem;
+  height: 70px;
+  width: 100%; /* em vez de 140px fixo */
+  box-sizing: border-box;
+}
 
-    #first{
-      height: 200px;
-    }
+.weatherInfos .left {
+  width: 90%; /* em vez de 400px fixo */
+  max-width: 400px; /* mantém o limite em telas grandes */
+  background-color: var(--accent);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 1.5em;
+  padding: 20px;
+  box-sizing: border-box;
+}
 
-    .stationCard p{
-      font-weight: 700;
-      font-size: 1.2em;
-    }
-
-    .stationCard span{
-      font-weight: 400;
-    }
+.weatherInfos .left .imgContainer {
+  height: 180px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+}
+  #first h1{
+    color: var(--main-color);
+  }
   </style>
 </head>
 <body>
@@ -49,7 +67,7 @@
       
     </section>
     <section id="second">
-  <div class="stationCard">
+  <!-- <div class="stationCard">
     <p>Latitude: <span class="latitude"></span></p>
     <p>Longitude: <span class="longitude"></span></p>
     <p>Temperatura: <span class="temperature"></span></p>
@@ -58,7 +76,29 @@
     <p>Vento: <span class="windSpeed"></span></p>
     <p>Direção: <span class="windDirection"></span></p>
     <p>Data: <span class="date"></span></p>
-  </div>
+  </div> -->
+
+<div class="weatherInfos">
+  <aside class="left">
+
+    <div class="imgContainer">
+      <img src="./assets/imgs/clouds_bg.jpg" alt="">
+      <h1 class="mainTemperature temperature"></h1>
+      <h1 class="mainClock date"></h1>
+    </div>
+
+    <ul class="weatherSpecs">
+      <li><i class='bx bx-wind'></i> Vento <br><span class="windSpeed"></span></li>
+      <li><i class='bx bx-droplet'></i> Umidade <br><span class="humidity"></span></li>
+      <li><i class='bx bx-map'></i> Latitude <br><span class="latitude"></span></li>
+      <li><i class='bx bxl-tailwind-css'></i> Pressão <br><span class="pressure"></span></li>
+      <li><i class='bx bx-navigation'></i> Direção <br><span class="windDirection"></span></li>
+      <li><i class='bx bx-globe'></i> Longitude <br><span class="longitude"></span></li>
+    </ul>
+
+  </aside>
+</div>
+
 </section>
   </main>
 </body>

@@ -192,13 +192,16 @@ section {
   position: absolute;
   bottom: 10px;
   left: 10px;
-   color: white;
+  color: white;
+  font-size: 1.2rem;
 }
 
 .weatherInfos .left .imgContainer .mainClock{
   position: absolute;
   top: 10px;
   right: 10px;
+  font-size: 1.2rem;
+
 }
 
 .weatherInfos .left h1,
