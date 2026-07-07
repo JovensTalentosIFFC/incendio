@@ -20,9 +20,17 @@ createStationButton.addEventListener("click", (e) => {
 
 const stationsList = document.querySelector('.stationsManager');
 let stations;
-function renderStations() {
+async function renderStations() {
   stations = JSON.parse(localStorage.getItem('stations') || '[]');
-
+  if(stations.length===0){
+    const allStationsData = await fetch('http://localhost:8080/stations', {
+      method: 'GET',
+      headers: {'Content-type': 'application/json'}
+    })
+    console.log(allStationsData)
+    stations = await allStationsData.json();
+    localStorage.setItem('stations', JSON.stringify(stations));
+  }
 
   stationsList.innerHTML = '';
 

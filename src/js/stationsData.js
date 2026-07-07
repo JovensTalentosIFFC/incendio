@@ -47,5 +47,25 @@ source.onmessage = (e) => {
 
 source.onerror = () => {
   console.error('SSE desconectado');
-  source.close();
+  source.close(); 
 };
+
+const trashButton = document.querySelector('.bx.bxs-trash');
+const allScreen = document.querySelector('.allScreen');
+trashButton.addEventListener('click', () =>{
+  allScreen.classList.toggle('active'); 
+})
+
+
+const deleteStation = async () =>{
+  await fetch(`http://localhost:8080/stations/delete?id=${currentStation.stationId}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  localStorage.setItem('stations', '[]');
+  window.location.href = "stations.html";
+}
+
+const cancelDeleteStation = () =>{
+  allScreen.classList.toggle('active');
+}

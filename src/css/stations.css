@@ -100,6 +100,8 @@ section {
 
 #first h1{
   color: var(--main-color);
+  width: 350px;
+  text-align: center;
 }
 
 button{
