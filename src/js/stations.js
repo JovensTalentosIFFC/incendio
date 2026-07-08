@@ -29,9 +29,19 @@ async function renderStations() {
     })
     console.log(allStationsData)
     stations = await allStationsData.json();
+    stations = stations.map(s => ({
+      stationId: s.station_id,
+      timestampUnix: s.timestamp_unix,
+      timezoneUnix: s.timezone_unix,
+      temperatureC: s.temperature_c,
+      humidityPct: s.humidity_pct,
+      pressureHpa: s.pressure_hpa,
+      windSpeedMs: s.wind_speed_ms,
+      windDirectionDeg: s.wind_direction_deg
+    }));
     localStorage.setItem('stations', JSON.stringify(stations));
   }
-
+  console.log(stations[0])
   stationsList.innerHTML = '';
 
   stations.forEach((station) => {
@@ -42,7 +52,7 @@ async function renderStations() {
   });
 }
 
-renderStations();
+renderStations(); 
 
 document.addEventListener('click', e =>{
   for(let station of stations){
