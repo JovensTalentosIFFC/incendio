@@ -356,3 +356,9 @@ section {
     background: transparent;
     border-radius: 16px;
 }
+
+@media(max-width: 600px){
+  nav ul li{
+    font-size: 1rem;
+  }
+}
