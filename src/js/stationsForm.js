@@ -2,7 +2,7 @@ const submitBtn = document.querySelector('.submit-btn');
 const latitudeInput = document.querySelector('#latitudeInput');
 const longitudeInput = document.querySelector('#longitudeInput');
 const timeZoneInput = document.querySelector('#timeZoneInput');
-
+const userId = Date.now();
 function generateStationId(lat, lon) {
   const latDir = lat >= 0 ? 'N' : 'S';
   const lonDir = lon >= 0 ? 'E' : 'W';
@@ -66,6 +66,7 @@ submitBtn.addEventListener("click", async (e) => {
 
   const stationData = {
     stationId,
+    userId: userId.toString(),
     timeZone: parseInt(tz),
     timestamp: Math.floor(Date.now() / 1000),
   };
@@ -77,7 +78,7 @@ submitBtn.addEventListener("click", async (e) => {
   await fetch('http://localhost:8080/stations/add', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ stationId, timeZone: parseInt(tz), timestamp: Math.floor(Date.now() / 1000) })
+    body: JSON.stringify({ stationId, userId: userId.toString(), timeZone: parseInt(tz), timestamp: Math.floor(Date.now() / 1000) })
   });
 
   window.location.href = "stations.html";

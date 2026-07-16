@@ -31,6 +31,7 @@ async function renderStations() {
     stations = await allStationsData.json();
     stations = stations.map(s => ({
       stationId: s.station_id,
+      user_id: s.user_id,
       timestampUnix: s.timestamp_unix,
       timezoneUnix: s.timezone_unix,
       temperatureC: s.temperature_c,
