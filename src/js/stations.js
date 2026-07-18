@@ -32,6 +32,7 @@ async function renderStations() {
     stations = stations.map(s => ({
       stationId: s.station_id,
       user_id: s.user_id,
+      name: s.name,
       timestampUnix: s.timestamp_unix,
       timezoneUnix: s.timezone_unix,
       temperatureC: s.temperature_c,
@@ -45,22 +46,28 @@ async function renderStations() {
   console.log(stations[0])
   stationsList.innerHTML = '';
 
-  stations.forEach((station) => {
+   stations.forEach((station) => {
     const li = document.createElement('li');
     li.classList.add('stationCard');
-    li.innerHTML = `<p>ID: <span class="stationId">${station.stationId}</span></p>`;
+    li.dataset.stationId = station.stationId; // guarda o ID direto no elemento
+
+    li.innerHTML = `
+      <p>Nome: <span class="stationId">${station.name}</span></p>
+      <p>ID: <span class="stationId">${station.stationId}</span></p>`;
+
     stationsList.appendChild(li);
   });
 }
 
 renderStations(); 
 
-document.addEventListener('click', e =>{
-  for(let station of stations){
-    if(station.stationId == e.target.closest('.stationCard').querySelector('.stationId').textContent){
-      localStorage.setItem('currentStation', JSON.stringify(station));
-      window.location.href = 'stationsData.html';
-    }
-  }
-  // localStorage.setItem('currentStation', JSON.stringify(station))
-})
+stationsList.addEventListener('click', (e) => {
+  const card = e.target.closest('.stationCard');
+  if (!card) return; // clique fora de um card, ignora
+
+  const station = stations.find(s => s.stationId === card.dataset.stationId);
+  if (!station) return;
+
+  localStorage.setItem('currentStation', JSON.stringify(station));
+  window.location.href = 'stationsData.html';
+});

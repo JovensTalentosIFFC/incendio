@@ -17,7 +17,7 @@
 }
 
 body {
-  background-image: url(/src/assets/imgs/background.png);
+  background-image: url(../assets/imgs/background.png);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -50,6 +50,9 @@ nav {
   align-items: center;
   position: fixed;
   top: 0;
+  z-index: 10000;
+  background-color: rgba(255, 255, 255, 0.654);
+  backdrop-filter: blur(10px);
 }
 
 nav ul {
@@ -65,7 +68,7 @@ nav ul li {
 }
 
 nav ul li a{
-  color: white;
+  color: rgb(0, 0, 0);
   text-decoration: none;
 }
 

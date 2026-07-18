@@ -22,8 +22,6 @@
     border-radius: 5px;
     padding: 10px;
     font-size: 2rem;
-    position: relative;
-    left: 40%;
     cursor: pointer;
     transition: .4s;
   }
@@ -130,6 +128,18 @@
     color: red;
   }
 
+  .topBar{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .topBar h3{
+    color: white;
+  }
+
+
 
   </style>
 </head>
@@ -162,7 +172,10 @@
 
 <div class="weatherInfos">
   <aside class="left">
-    <i class='bx bxs-trash'></i>
+    <div class="topBar">
+      <h3>Nome</h3>
+      <i class='bx bxs-trash'></i>
+    </div>
 
     <div class="imgContainer">
       <img src="./assets/imgs/clouds_bg.jpg" alt="">

@@ -42,6 +42,7 @@ source.onmessage = (e) => {
   document.querySelector('.pressure').textContent     = data.pressure_hpa   + ' hPa';
   document.querySelector('.windSpeed').textContent    = data.wind_speed_ms  + ' m/s';
   document.querySelector('.windDirection').textContent = data.wind_direction_deg + '°';
+  document.querySelector('.weatherInfos .topBar h3').textContent = data.name;
   
 };
 

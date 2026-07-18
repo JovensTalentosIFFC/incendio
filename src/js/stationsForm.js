@@ -2,6 +2,7 @@ const submitBtn = document.querySelector('.submit-btn');
 const latitudeInput = document.querySelector('#latitudeInput');
 const longitudeInput = document.querySelector('#longitudeInput');
 const timeZoneInput = document.querySelector('#timeZoneInput');
+const nameInput = document.querySelector('#nameInput');
 const userId = Date.now();
 function generateStationId(lat, lon) {
   const latDir = lat >= 0 ? 'N' : 'S';
@@ -50,6 +51,11 @@ function validateInputs(lat, lon, tz) {
     return false;
   }
 
+  if(nameInput.value.length > 20){
+    alert('O nome está grande demais! Procure usar um nome mais resumido.');
+    return;
+  }
+
   return true;
 }
 
@@ -59,7 +65,7 @@ submitBtn.addEventListener("click", async (e) => {
   const lat = latitudeInput.value.trim();
   const lon = longitudeInput.value.trim();
   const tz  = timeZoneInput.value.trim();
-
+  const name = nameInput.value.trim();
   if (!validateInputs(lat, lon, tz)) return;
 
   const stationId = generateStationId(parseFloat(lat), parseFloat(lon));
@@ -67,6 +73,7 @@ submitBtn.addEventListener("click", async (e) => {
   const stationData = {
     stationId,
     userId: userId.toString(),
+    name,
     timeZone: parseInt(tz),
     timestamp: Math.floor(Date.now() / 1000),
   };
@@ -78,7 +85,7 @@ submitBtn.addEventListener("click", async (e) => {
   await fetch('http://localhost:8080/stations/add', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ stationId, userId: userId.toString(), timeZone: parseInt(tz), timestamp: Math.floor(Date.now() / 1000) })
+    body: JSON.stringify({ stationId, userId: userId.toString(), name, timeZone: parseInt(tz), timestamp: Math.floor(Date.now() / 1000) })
   });
 
   window.location.href = "stations.html";

@@ -10,7 +10,7 @@
         margin: 0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-        background-image: url(/src/assets/imgs/background.png);
+        background-image: url(../assets/imgs/background.png);
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -110,7 +110,11 @@ body::before {
     <p>Adicione as informações da sua estação meteorológica.</p>
     <form>
       <div class="field-group">
-        <label for="station-id">Latitude</label>
+        <label for="name">Name</label>
+        <input type="text" id="nameInput">
+      </div>
+      <div class="field-group">
+        <label for="latitude">Latitude</label>
         <input type="number" id="latitudeInput">
       </div>
       <div class="field-group">
