@@ -3,7 +3,8 @@ const latitudeInput = document.querySelector('#latitudeInput');
 const longitudeInput = document.querySelector('#longitudeInput');
 const timeZoneInput = document.querySelector('#timeZoneInput');
 const nameInput = document.querySelector('#nameInput');
-const userId = Date.now();
+const userId = localStorage.getItem('userId') || Date.now();
+localStorage.setItem('userId', userId);
 function generateStationId(lat, lon) {
   const latDir = lat >= 0 ? 'N' : 'S';
   const lonDir = lon >= 0 ? 'E' : 'W';
@@ -90,3 +91,8 @@ submitBtn.addEventListener("click", async (e) => {
 
   window.location.href = "stations.html";
 });
+
+
+const returnToStations = () =>{
+  window.location.href = "stations.html";
+}

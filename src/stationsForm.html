@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'> 
   <title>Crie Sua Estação</title>
   <script src="./js/stationsForm.js" defer></script>
   <style>
@@ -102,11 +103,25 @@ body::before {
       cursor: pointer;
     }
 
+    .form-card aside{
+      position: relative;
+    }
+
+    .form-card aside i{
+      position: absolute;
+      top: 0;
+      right: 10px;
+      font-size: 3rem;
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
   <main class="form-card">
-    <h1>Crie Sua Estação</h1>
+    <aside>
+      <h1>Crie Sua Estação </h1> <i class='bx bx-x' onclick="returnToStations()"></i>
+    </aside>
     <p>Adicione as informações da sua estação meteorológica.</p>
     <form>
       <div class="field-group">

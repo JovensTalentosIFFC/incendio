@@ -1,5 +1,5 @@
 const tempValue = document.querySelector('.tempValue');
-
+const userId = localStorage.getItem('userId');
 // const source = new EventSource('http://192.168.18.138:8080/temperatura');
 
 // source.onmessage = (event) => {
@@ -23,7 +23,7 @@ let stations;
 async function renderStations() {
   stations = JSON.parse(localStorage.getItem('stations') || '[]');
   if(stations.length===0){
-    const allStationsData = await fetch('http://localhost:8080/stations', {
+    const allStationsData = await fetch(`http://localhost:8080/stations/byUserId?userId=${userId}`, {
       method: 'GET',
       headers: {'Content-type': 'application/json'}
     })
