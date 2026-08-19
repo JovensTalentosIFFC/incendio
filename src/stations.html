@@ -7,8 +7,8 @@
   <script src="./js/stations.js" defer></script>
   <title>Sua Estação</title>
 </head>
-<body>
 
+<body>
 
   <nav>
     <ul>
@@ -20,15 +20,35 @@
 
   <main>
     <section id="first">
-      <h1>Monitore suas estações em tempo real.</h1>
-      <ul class="stationsManager">
-          <li class="stationCard">
-            <p>Nome: <span class="name">...</span></p>
-            <p>ID: <span class="stationId">S19028W18390</span></p>
-          </li>
-      </ul>
+      <h1>Monitore suas estações em tempo real</h1>
+
+      <div class="tableContainer">
+        <table class="stationsManager">
+
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>ID</th>
+              <th>Temperatura</th>
+              <th>Umidade</th>
+              <th>Pressão</th>
+              <th>Vento</th>
+              <th>Direção</th>
+              <th>Data/Hora</th>
+            </tr>
+          </thead>
+
+          <tbody>
+          </tbody>
+
+        </table>
+      </div>
+
     </section>
+
     <button id="criar">Criar Estação</button>
+
   </main>
+
 </body>
 </html>

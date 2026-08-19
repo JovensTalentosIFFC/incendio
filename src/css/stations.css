@@ -32,7 +32,7 @@ body::before {
 }
 
 main {
-  padding: 40px;
+  padding: 40px 40px 80px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -92,6 +92,7 @@ section {
   flex-direction: column;
   gap: 40px;
   width: 1200px;
+  margin-bottom: 40px;
 }
 
 #first {
@@ -100,14 +101,15 @@ section {
   align-items: center;
   flex-direction: column;
   gap: 20px;
-  margin-top: 150px;
+  margin-top: 200px;
   width: 100%;
 }
 
 #first h1{
   color: var(--main-color);
-  width: 350px;
+  width: 100%;
   text-align: center;
+  margin-bottom: 20px;
 }
 
 button{
@@ -122,52 +124,71 @@ button{
   text-align: center;
 }
 
-.stationsManager {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 24px;
-  list-style: none;
-  padding: 40px;
-  margin: 0;
-  width: 100%;
-  box-sizing: border-box;
-}
+/* ===================================
+   TABELA DE ESTAÇÕES
+   =================================== */
 
-.stationCard {
+.tableContainer {
+  width: 100%;
+  max-height: 600px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.479);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  height: 200px;
-  border-radius: 20px;
-  padding: 24px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
 }
 
-.stationCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+.stationsManager {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
 }
 
-.stationCard p {
-  margin: 0;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
+.stationsManager thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.stationsManager thead th {
+  background-color: var(--main-color);
+  color: white;
+  font-weight: 600;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  padding: 16px 20px;
+  white-space: nowrap;
 }
 
-.stationCard .stationId {
-  display: block;
-  font-size: 16px;
+.stationsManager tbody tr.stationCard {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.stationsManager tbody tr.stationCard:last-child {
+  border-bottom: none;
+}
+
+.stationsManager tbody tr.stationCard:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.stationsManager tbody td {
+  padding: 14px 20px;
+  font-size: 14px;
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+.stationsManager tbody td.stationName {
+  font-weight: 600;
+}
+
+.stationsManager tbody td.stationId {
   font-weight: 700;
-  color: white;
-  margin-top: 4px;
-  word-break: break-all;
+  color: var(--main-color);
 }
-
