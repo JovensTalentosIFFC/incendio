@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'> 
   <title>Crie Sua Estação</title>
-  <script src="./js/stations.js" defer></script>
+  <script src="./js/stationsForm.js" defer></script>
   <style>
     body {
         margin: 0;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-        background-image: url(/src/assets/imgs/background.png);
+        background-image: url(../assets/imgs/background.png);
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -37,7 +38,7 @@ body::before {
       border-radius: 30px;
       box-shadow: 0 12px 30px rgba(112, 85, 86, 0.22);
       padding: 32px;
-      width: min(820px, 90vw);
+      width: min(820px, 80vw);
       text-align: center;
       border: 2px solid rgba(255, 255, 255, 0.8);
       margin-top: 80px;
@@ -78,6 +79,7 @@ body::before {
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
+
     input:focus,
     textarea:focus,
     select:focus {
@@ -97,7 +99,19 @@ body::before {
       color: white;
       font-weight: 700;
       padding: 15px 22px;
-      border-radius: 999px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .form-card aside{
+      position: relative;
+    }
+
+    .form-card aside i{
+      position: absolute;
+      top: 0;
+      right: 10px;
+      font-size: 3rem;
       cursor: pointer;
     }
 
@@ -105,41 +119,29 @@ body::before {
 </head>
 <body>
   <main class="form-card">
-    <h1>Crie Sua Estação</h1>
+    <aside>
+      <h1>Crie Sua Estação </h1> <i class='bx bx-x' onclick="returnToStations()"></i>
+    </aside>
     <p>Adicione as informações da sua estação meteorológica.</p>
     <form id="station-form">
       <div class="field-group">
-        <label for="station-id">ID da Estação</label>
-        <input type="text" id="station-id" name="station-id" >
+        <label for="name">Name</label>
+        <input type="text" id="nameInput">
       </div>
       <div class="field-group">
-        <label for="time-stamp">Time Stamp</label>
-        <input type="text" id="time-stamp" name="time-stamp"  />
+        <label for="latitude">Latitude</label>
+        <input type="number" id="latitudeInput">
+      </div>
+      <div class="field-group">
+        <label for="time-stamp">Longitude</label>
+        <input type="number" id="longitudeInput" />
       </div>
         <div class="field-group">
-            <label for="time-zone">Time Zone</label>
-            <input type="text" id="time-zone" name="time-zone">
+            <label for="time-zone">Time Zone (unix)</label>
+            <input type="number" id="timeZoneInput" name="time-zone">
       </div>
-         <div class="field-group">
-                <label for="temperature">Temperatura</label>
-                <input type="text" id="temperature" name="temperature">
-        </div>
-        <div class="field-group">
-        <label for="humidity">Humidade</label>
-        <input type="text" id="humidity" name="humidity"  />
-      </div>
-      <div class="field-group">
-        <label for="pressure">Pressão</label>
-        <input type="text" id="pressure" name="pressure"  />
-      </div>
-      <div class="field-group">
-        <label for="wind-speed">Velocidade do Vento</label>
-        <input type="text" id="wind-speed" name="wind-speed" />
-      </div>
-      <div class="field-group">
-        <label for="wind-direction">Direção do Vento</label>
-        <input type="text" id="wind-direction" name="wind-direction" />
-      </div>
+        
+      
       <button type="submit" class="submit-btn">Enviar</button>
     </form>
   </main>
