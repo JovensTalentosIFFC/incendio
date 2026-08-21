@@ -42,8 +42,16 @@ source.onmessage = (e) => {
   document.querySelector('.pressure').textContent     = data.pressure_hpa   + ' hPa';
   document.querySelector('.windSpeed').textContent    = data.wind_speed_ms  + ' m/s';
   document.querySelector('.windDirection').textContent = data.wind_direction_deg + '°';
+
+  const windDirLabels = ['N','NE','L','SE','S','SO','O','NO'];
+  const windDirFiles  = ['norte','nordeste','leste','sudeste','sul','sudoeste','oeste','noroeste'];
+  const windDirIndex  = Math.round(data.wind_direction_deg / 45) % 8;
+
+  document.querySelector('.windDirection').textContent += ` (${windDirLabels[windDirIndex]})`;
+  document.getElementById('windDirectionImg').src = `src/assets/imgs/${windDirFiles[windDirIndex]}.png`;
+
   document.querySelector('.weatherInfos .topBar h3').textContent = data.name;
-  
+
 };
 
 source.onerror = () => {

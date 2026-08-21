@@ -139,7 +139,10 @@
     color: white;
   }
 
-
+  .windArrowWrap{
+    display: inline-block;
+    vertical-align: middle;
+  }
 
   </style>
 </head>
@@ -188,7 +191,10 @@
       <li><i class='bx bx-droplet'></i> Umidade <br><span class="humidity"></span></li>
       <li><i class='bx bx-map'></i> Latitude <br><span class="latitude"></span></li>
       <li><i class='bx bxl-tailwind-css'></i> Pressão <br><span class="pressure"></span></li>
-      <li><i class='bx bx-navigation'></i> Direção <br><span class="windDirection"></span></li>
+      <li>
+        <img id="windDirectionImg" class="windArrowWrap" src="src/assets/imgs/norte.png" alt="Direção do vento" width="22" height="22">
+        Direção <br><span class="windDirection"></span>
+      </li>
       <li><i class='bx bx-globe'></i> Longitude <br><span class="longitude"></span></li>
     </ul>
 
