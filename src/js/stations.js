@@ -5,7 +5,7 @@
 // Quando for testar com a API real (ex: na máquina do seu colega, ou
 // quando o backend estiver rodando aqui também), é só trocar para false
 // — nenhuma outra linha precisa mudar.
-const MOCK_MODE = false;
+const MOCK_MODE = true;
 
 const MOCK_STATIONS = [
   {

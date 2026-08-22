@@ -39,6 +39,17 @@ source.onmessage = (e) => {
 
   document.querySelector('.temperature').textContent  = data.temperature_c  + ' °C';
   document.querySelector('.humidity').textContent     = data.humidity_pct   + ' %';
+
+  const humidityFiles = [
+    { max: 20,  file: 'muito-seco'  },
+    { max: 40,  file: 'seco'        },
+    { max: 60,  file: 'moderado'    },
+    { max: 80,  file: 'umido'       },
+    { max: 100, file: 'muito-umido' }
+  ];
+  const humidityLevel = humidityFiles.find(level => data.humidity_pct <= level.max) || humidityFiles[humidityFiles.length - 1];
+  document.getElementById('humidityImg').src = `./assets/imgs/${humidityLevel.file}.png`;
+
   document.querySelector('.pressure').textContent     = data.pressure_hpa   + ' hPa';
   document.querySelector('.windSpeed').textContent    = data.wind_speed_ms  + ' m/s';
   document.querySelector('.windDirection').textContent = data.wind_direction_deg + '°';
@@ -48,7 +59,7 @@ source.onmessage = (e) => {
   const windDirIndex  = Math.round(data.wind_direction_deg / 45) % 8;
 
   document.querySelector('.windDirection').textContent += ` (${windDirLabels[windDirIndex]})`;
-  document.getElementById('windDirectionImg').src = `src/assets/imgs/${windDirFiles[windDirIndex]}.png`;
+  document.getElementById('windDirectionImg').src = `./assets/imgs/${windDirFiles[windDirIndex]}.png`;
 
   document.querySelector('.weatherInfos .topBar h3').textContent = data.name;
 
