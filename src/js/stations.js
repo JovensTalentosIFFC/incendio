@@ -1,197 +1,169 @@
-// ============================================
-// MODO MOCK (testar sem o backend)
-// ============================================
-// Deixe true enquanto o backend não estiver disponível na sua máquina.
-// Quando for testar com a API real (ex: na máquina do seu colega, ou
-// quando o backend estiver rodando aqui também), é só trocar para false
-// — nenhuma outra linha precisa mudar.
-const MOCK_MODE = true;
-
-const MOCK_STATIONS = [
-  {
-    station_id: 'S231234W0461234',
-    user_id: 'mock-user',
-    name: 'Estação Centro',
-    timestamp_unix: Math.floor(Date.now() / 1000),
-    timezone_unix: -10800, // UTC-3
-    temperature_c: 28.5,
-    humidity_pct: 65,
-    pressure_hpa: 1013.2,
-    wind_speed_ms: 3.4,
-    wind_direction_deg: 45
-  },
-  {
-    station_id: 'S231987W0461987',
-    user_id: 'mock-user',
-    name: 'Estação Zona Sul',
-    timestamp_unix: Math.floor(Date.now() / 1000),
-    timezone_unix: -10800,
-    temperature_c: 26.2,
-    humidity_pct: 70,
-    pressure_hpa: 1010.5,
-    wind_speed_ms: 2.1,
-    wind_direction_deg: 200
-  },
-  {
-    station_id: 'S230456W0460456',
-    user_id: 'mock-user',
-    name: 'Estação Norte',
-    timestamp_unix: Math.floor(Date.now() / 1000),
-    timezone_unix: -10800,
-    temperature_c: 31.0,
-    humidity_pct: 55,
-    pressure_hpa: 1015.8,
-    wind_speed_ms: 5.6,
-    wind_direction_deg: 90
-  }
-];
+// Deve ser o mesmo computador/IP usado pelo Arduino em http_server.
+const API_BASE_URL = 'http://localhost:8080';
+const MOCK_MODE = false; // false para usar o backend real
+const MOCK_USER_ID = 'mock-user';
 
 const userId = localStorage.getItem('userId');
-
 const createStationButton = document.querySelector('#criar');
-createStationButton.addEventListener("click", (e) => {
-  e.preventDefault();
-  window.location.href = "stationsForm.html";
-});
-
 const stationsBody = document.querySelector('.stationsManager tbody');
 let stations = [];
+let sseConnection = null;
 
-// formata timestamp_unix (segundos) + timezone_unix (offset em segundos) em data/hora local da estação
+if (!stationsBody) throw new Error('Elemento .stationsManager tbody nao encontrado.');
+if (!MOCK_MODE && !userId) {
+  console.error('userId nao encontrado no localStorage. Redirecionando para o formulario.');
+  window.location.href = 'stationsForm.html';
+}
+
+createStationButton?.addEventListener('click', (event) => {
+  event.preventDefault();
+  window.location.href = 'stationsForm.html';
+});
+
 function formatTimestamp(timestampUnix, timezoneUnix) {
   if (timestampUnix === undefined || timestampUnix === null) return '--';
-
-  const offsetMs = (timezoneUnix ?? 0) * 1000;
-  const date = new Date(timestampUnix * 1000 + offsetMs);
-
+  const date = new Date(timestampUnix * 1000 + (timezoneUnix ?? 0) * 1000);
   const pad = (n) => String(n).padStart(2, '0');
-  const dia = pad(date.getUTCDate());
-  const mes = pad(date.getUTCMonth() + 1);
-  const hora = pad(date.getUTCHours());
-  const min = pad(date.getUTCMinutes());
-
-  return `${dia}/${mes} ${hora}:${min}`;
+  return `${pad(date.getUTCDate())}/${pad(date.getUTCMonth() + 1)} ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}`;
 }
-
-// desenha a tabela inteira (usado só na primeira renderização)
-function renderStations() {
-  stationsBody.innerHTML = '';
-
-  stations.forEach((station) => {
-    const tr = document.createElement('tr');
-    tr.classList.add('stationCard');
-    tr.dataset.stationId = station.stationId;
-
-    tr.innerHTML = `
-      <td class="stationName">${station.name}</td>
-      <td class="stationId">${station.stationId}</td>
-      <td class="stationTemp">${station.temperatureC?.toFixed(1) ?? '--'} °C</td>
-      <td class="stationHumidity">${station.humidityPct?.toFixed(0) ?? '--'} %</td>
-      <td class="stationPressure">${station.pressureHpa?.toFixed(1) ?? '--'} hPa</td>
-      <td class="stationWindSpeed">${station.windSpeedMs?.toFixed(1) ?? '--'} m/s</td>
-      <td class="stationWindDir">${station.windDirectionDeg ?? '--'}°</td>
-      <td class="stationTimestamp">${formatTimestamp(station.timestampUnix, station.timezoneUnix)}</td>
-    `;
-
-    stationsBody.appendChild(tr);
-  });
-}
-
-// atualiza só os valores que mudam, sem recriar as <tr> (evita "piscar" a tabela)
-function updateStationsInPlace(novasStations) {
-  novasStations.forEach((novaStation) => {
-    const row = stationsBody.querySelector(`tr.stationCard[data-station-id="${novaStation.stationId}"]`);
-    if (!row) return;
-
-    row.querySelector('.stationTemp').textContent = `${novaStation.temperatureC?.toFixed(1) ?? '--'} °C`;
-    row.querySelector('.stationHumidity').textContent = `${novaStation.humidityPct?.toFixed(0) ?? '--'} %`;
-    row.querySelector('.stationPressure').textContent = `${novaStation.pressureHpa?.toFixed(1) ?? '--'} hPa`;
-    row.querySelector('.stationWindSpeed').textContent = `${novaStation.windSpeedMs?.toFixed(1) ?? '--'} m/s`;
-    row.querySelector('.stationWindDir').textContent = `${novaStation.windDirectionDeg ?? '--'}°`;
-    row.querySelector('.stationTimestamp').textContent = formatTimestamp(novaStation.timestampUnix, novaStation.timezoneUnix);
-  });
-}
-
-// clique numa linha -> vai pra tela de detalhe
-stationsBody.addEventListener('click', (e) => {
-  const row = e.target.closest('tr.stationCard');
-  if (!row) return;
-
-  const station = stations.find(s => s.stationId === row.dataset.stationId);
-  if (!station) return;
-
-  localStorage.setItem('currentStation', JSON.stringify(station));
-  window.location.href = 'stationsData.html';
-});
 
 function mapStation(s) {
   return {
     stationId: s.station_id,
     userId: s.user_id,
-    name: s.name,
+    name: s.name || s.station_id,
     timestampUnix: s.timestamp_unix,
     timezoneUnix: s.timezone_unix,
     temperatureC: s.temperature_c,
     humidityPct: s.humidity_pct,
     pressureHpa: s.pressure_hpa,
+    co2Ppm: s.co2_ppm,
+    tvocPpb: s.tvoc_ppb,
+    altitudeM: s.altitude_m,
+    lux: s.lux,
+    uvIndex: s.uv_index,
+    uvLevel: s.uv_level,
+    rainLevel: s.rain_level,
+    isRaining: s.is_raining,
     windSpeedMs: s.wind_speed_ms,
     windDirectionDeg: s.wind_direction_deg
   };
 }
 
-// 1) carrega a lista inicial via fetch normal (rota estática: /stations/byUserId)
+function number(value, digits, suffix) {
+  return value === undefined || value === null || Number.isNaN(Number(value))
+    ? '--'
+    : `${Number(value).toFixed(digits)}${suffix}`;
+}
+
+function renderStations() {
+  stationsBody.innerHTML = '';
+  stations.forEach((station) => {
+    const tr = document.createElement('tr');
+    tr.className = 'stationCard';
+    tr.dataset.stationId = station.stationId;
+    tr.innerHTML = `
+      <td class="stationName"></td><td class="stationId"></td>
+      <td class="stationTemp"></td><td class="stationHumidity"></td>
+      <td class="stationPressure"></td><td class="stationCo2"></td>
+      <td class="stationTvoc"></td><td class="stationLux"></td>
+      <td class="stationUv"></td><td class="stationRain"></td>
+      <td class="stationWindSpeed"></td><td class="stationWindDir"></td>
+      <td class="stationTimestamp"></td>`;
+    preencherLinha(tr, station);
+    stationsBody.appendChild(tr);
+  });
+}
+
+function preencherLinha(row, station) {
+  row.querySelector('.stationName').textContent = station.name ?? '--';
+  row.querySelector('.stationId').textContent = station.stationId ?? '--';
+  row.querySelector('.stationTemp').textContent = number(station.temperatureC, 1, ' °C');
+  row.querySelector('.stationHumidity').textContent = number(station.humidityPct, 0, ' %');
+  row.querySelector('.stationPressure').textContent = number(station.pressureHpa, 1, ' hPa');
+  row.querySelector('.stationCo2').textContent = number(station.co2Ppm, 0, ' ppm');
+  row.querySelector('.stationTvoc').textContent = number(station.tvocPpb, 0, ' ppb');
+  row.querySelector('.stationLux').textContent = number(station.lux, 0, ' lux');
+  row.querySelector('.stationUv').textContent = `${number(station.uvIndex, 1, '')} (${station.uvLevel ?? '--'})`;
+  row.querySelector('.stationRain').textContent = station.isRaining ? 'Chovendo' : (station.rainLevel ?? '--');
+  row.querySelector('.stationWindSpeed').textContent = number(station.windSpeedMs, 1, ' m/s');
+  row.querySelector('.stationWindDir').textContent = number(station.windDirectionDeg, 0, '°');
+  row.querySelector('.stationTimestamp').textContent = formatTimestamp(station.timestampUnix, station.timezoneUnix);
+}
+
+function sameStationSet(current, next) {
+  if (current.length !== next.length) return false;
+  const ids = new Set(current.map((station) => station.stationId));
+  return next.every((station) => ids.has(station.stationId));
+}
+
+function updateStationsInPlace(nextStations) {
+  nextStations.forEach((station) => {
+    const row = stationsBody.querySelector(`tr.stationCard[data-station-id="${CSS.escape(station.stationId)}"]`);
+    if (row) preencherLinha(row, station);
+  });
+}
+
+stationsBody.addEventListener('click', (event) => {
+  const row = event.target.closest('tr.stationCard');
+  if (!row) return;
+  const station = stations.find((item) => item.stationId === row.dataset.stationId);
+  if (station) {
+    localStorage.setItem('currentStation', JSON.stringify(station));
+    window.location.href = 'stationsData.html';
+  }
+});
+
+const mockStations = [
+  { station_id: 'S231234W0461234', user_id: MOCK_USER_ID, name: 'Estacao Centro', timestamp_unix: Math.floor(Date.now() / 1000), timezone_unix: -10800, temperature_c: 28.5, humidity_pct: 65, pressure_hpa: 1013.2, co2_ppm: 480, tvoc_ppb: 12, altitude_m: 0, lux: 340, uv_index: 4.2, uv_level: 'Moderado', rain_level: 'Sem Chuva', is_raining: false, wind_speed_ms: 3.4, wind_direction_deg: 45 }
+];
+
 async function loadInitialStations() {
   if (MOCK_MODE) {
-    stations = MOCK_STATIONS.map(mapStation);
+    stations = mockStations.map(mapStation);
     renderStations();
     return;
   }
-
-  try {
-    const res = await fetch(`http://localhost:8080/stations/byUserId?userId=${userId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const data = await res.json();
-    stations = data.map(mapStation);
-    renderStations();
-  } catch (err) {
-    console.error('Erro ao carregar estações:', err);
-  }
+  const response = await fetch(`${API_BASE_URL}/stations/byUserId?userId=${encodeURIComponent(userId)}`);
+  if (!response.ok) throw new Error(`Falha ao carregar estacoes: HTTP ${response.status}`);
+  const data = await response.json();
+  if (!Array.isArray(data)) throw new Error('Resposta invalida do backend.');
+  stations = data.map(mapStation);
+  renderStations();
 }
 
-// 2) abre o SSE (rota dinâmica: /stations/currentData) pra manter os dados atualizados
 function connectSSE() {
-  if (MOCK_MODE) {
-    // Sem backend, não há o que escutar via SSE — a tabela já foi
-    // preenchida pelo loadInitialStations() com os dados mock.
-    return null;
-  }
-
-  const es = new EventSource(`http://localhost:8080/stations/currentData?userId=${userId}`);
-
-  es.onmessage = (event) => {
-    const novasStations = JSON.parse(event.data).map(mapStation);
-
-    if (stations.length === 0) {
-      stations = novasStations;
-      renderStations();
-    } else {
-      stations = novasStations;
-      updateStationsInPlace(novasStations);
+  if (MOCK_MODE) return null;
+  if (sseConnection) sseConnection.close();
+  const connection = new EventSource(`${API_BASE_URL}/stations/currentData?userId=${encodeURIComponent(userId)}`);
+  sseConnection = connection;
+  connection.onopen = () => console.info('SSE conectado.');
+  connection.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (!Array.isArray(data)) throw new Error('Evento SSE nao contem uma lista.');
+      const nextStations = data.map(mapStation);
+      const updateInPlace = sameStationSet(stations, nextStations);
+      stations = nextStations;
+      if (updateInPlace) updateStationsInPlace(nextStations);
+      else renderStations();
+    } catch (error) {
+      console.error('Evento SSE invalido:', error);
     }
   };
-
-  es.onerror = (err) => {
-    console.error('Erro no SSE:', err);
-  };
-
-  return es;
+  connection.onerror = () => console.warn('SSE desconectado; o navegador tentara reconectar.');
+  return connection;
 }
 
-loadInitialStations();
-const sseConnection = connectSSE();
+async function start() {
+  try {
+    await loadInitialStations();
+    connectSSE();
+  } catch (error) {
+    console.error(error);
+    stationsBody.innerHTML = '<tr><td colspan="13">Nao foi possivel carregar as estacoes.</td></tr>';
+  }
+}
 
-window.addEventListener('beforeunload', () => {
-  sseConnection?.close();
-});
+start();
+window.addEventListener('beforeunload', () => sseConnection?.close());

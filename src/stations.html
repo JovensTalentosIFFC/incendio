@@ -1,54 +1,69 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./css/stations.css">
   <script src="./js/stations.js" defer></script>
-  <title>Sua Estação</title>
+  <title>Suas estações</title>
 </head>
 
 <body>
-
-  <nav>
+  <nav aria-label="Navegação principal">
     <ul>
       <li><a href="index.html">Início</a></li>
-      <li><a href="stations.html">Sua estação</a></li>
+      <li><a href="stations.html" aria-current="page">Suas estações</a></li>
       <li><a href="sobre.html">Sobre</a></li>
     </ul>
   </nav>
 
   <main>
-    <section id="first">
-      <h1>Monitore suas estações em tempo real</h1>
+    <section id="first" aria-labelledby="page-title">
+      <h1 id="page-title">Monitore suas estações em tempo real</h1>
 
       <div class="tableContainer">
         <table class="stationsManager">
-
+          <caption class="sr-only">Dados atuais das estações meteorológicas</caption>
           <thead>
             <tr>
-              <th>Nome</th>
-              <th>ID</th>
-              <th>Temperatura</th>
-              <th>Umidade</th>
-              <th>Pressão</th>
-              <th>Vento</th>
-              <th>Direção</th>
-              <th>Data/Hora</th>
+              <th scope="col">Nome</th>
+              <th scope="col">ID</th>
+              <th scope="col">Temperatura</th>
+              <th scope="col">Umidade</th>
+              <th scope="col">Pressão</th>
+              <th scope="col">CO₂</th>
+              <th scope="col">TVOC</th>
+              <th scope="col">Luminosidade</th>
+              <th scope="col">Índice UV</th>
+              <th scope="col">Chuva</th>
+              <th scope="col">Velocidade do vento</th>
+              <th scope="col">Direção do vento</th>
+              <th scope="col">Data/hora</th>
             </tr>
           </thead>
 
           <tbody>
+            <!-- As linhas são criadas pelo stations.js. -->
           </tbody>
-
         </table>
       </div>
-
     </section>
 
-    <button id="criar">Criar Estação</button>
-
+    <button id="criar" type="button">Criar estação</button>
   </main>
 
+  <style>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
 </body>
 </html>

@@ -1,220 +1,307 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./css/style.css">
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-  <title>Criar estação</title>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
   <script src="./js/stationsData.js" defer></script>
+  <title>Dados da estação</title>
+
   <style>
+    #first h1{
+      color: white;
+    }
+    .weatherSpecs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      width: 100%;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .weatherSpecs li {
+      box-sizing: border-box;
+      min-height: 80px;
+      width: 100%;
+      padding: 10px;
+      color: #fff;
+      text-align: center;
+      background-color: rgb(90, 147, 193);
+      border-radius: 10px;
+      font-size: 0.8rem;
+    }
+
+    .weatherSpecs li i {
+      font-size: 1.35rem;
+      vertical-align: middle;
+    }
+
+    .weatherSpecs li span {
+      display: inline-block;
+      margin-top: 4px;
+      font-weight: 700;
+    }
+
+    .weatherInfos .left {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100%;
+      max-width: 620px;
+      min-height: 820px;
+      padding: 20px;
+      background-color: var(--accent);
+      border-radius: 1.5em;
+    }
+
+    .weatherInfos .left .imgContainer {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+
+    .weatherInfos .left .imgContainer img {
+      min-width: 2000px;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .imgContainer .temperature,
+    .imgContainer .date {
+      position: absolute;
+      left: 20px;
+      margin: 0;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+    }
+
+    .imgContainer .temperature {
+      bottom: 48px;
+      font-size: 2rem;
+    }
+
+    .imgContainer .date {
+      bottom: 18px;
+      font-size: 0.9rem;
+    }
+
+    .topBar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 60px;
+    }
+
+    .topBar h3 {
+      margin: 0;
+      color: #fff;
+    }
+
+    .topBar .delete-icon {
+      padding: 10px;
+      color: #fff;
+      font-size: 2rem;
+      background-color: rgb(112, 204, 194);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .topBar .delete-icon:hover,
+    .topBar .delete-icon:focus-visible {
+      transform: scale(1.08);
+      outline: none;
+    }
+
+
+    .allScreen {
+      position: fixed;
+      z-index: 9999;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      backdrop-filter: blur(30px);
+      transition: 0.3s ease;
+    }
+
+    .allScreen.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .deletePopup {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      width: min(400px, calc(100% - 32px));
+      padding: 20px;
+      text-align: center;
+      background: #fff;
+      border-radius: 10px;
+    }
+    
+
+    .deletePopup h2,
+    .deletePopup p {
+      margin: 0;
+    }
+
+    .deleteButtonsDiv {
+      display: flex;
+      gap: 10px;
+    }
+
+    .deleteButtonsDiv button {
+      padding: 8px 14px;
+      font: inherit;
+      letter-spacing: 1px;
+      border: 0;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .deleteButtonsDiv button:first-child {
+      color: #fff;
+      background-color: var(--main-color);
+    }
+
+    .deleteButtonsDiv button:last-child {
+      color: var(--main-color);
+      background-color: #fff;
+      border: 1px solid var(--main-color);
+    }
+
+    @media (max-width: 700px) {
       .weatherSpecs {
-    margin-top: 18px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* ocupa o espaço disponível */
-    gap: 10px;
-    width: 100%;
-  }
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
 
-  i.bx.bxs-trash{
-    background-color: rgb(112, 204, 194);
-    color: white;
-    border-radius: 5px;
-    padding: 10px;
-    font-size: 2rem;
-    cursor: pointer;
-    transition: .4s;
-  }
-  i.bx.bxs-trash:hover{
-    font-size: 2.3rem;
-  }
-
-.weatherSpecs li {
-  background-color: rgb(90, 147, 193);
-  padding: 10px;
-  text-align: center;
-  border-radius: 10px;
-  font-size: .8rem;
-  height: 80px;
-  width: 100%; /* em vez de 140px fixo */
-  box-sizing: border-box;
-}
-.weatherInfos .left {
-  width: 100%;
-  max-width: 400px; /* mantém o limite em telas grandes */
-  height: 500px;
-  background-color: var(--accent);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: column;
-  border-radius: 1.5em;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.weatherInfos .left .imgContainer {
-  height: 180px;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  border-radius: 20px;
-}
-  #first h1{
-    color: var(--main-color);
-  }
-
-  .allScreen{
-    z-index: 9999;
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    backdrop-filter: blur(30px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none;
-    opacity: 0;
-    transition: .5s;
-  }
-
-  .allScreen.active{
-    pointer-events: all;
-    opacity: 100%;
-  }
-
-  .allScreen .deletePopup{
-    background-color: white;
-    padding: 20px 10px;
-    width: 400px;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 10px;
-    gap: 20px;
-
-  }
-
-  .deletePopup h2, p{
-    text-align: center;
-  }
-
-  .deletePopup .deleteButtonsDiv button{
-    outline: none;
-    border: none;
-    padding: 5px 8px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 1rem;
-  }
-
-  .deletePopup .deleteButtonsDiv button:nth-child(1){
-    background-color: var(--main-color);
-    color: white;
-  }
-  .deletePopup .deleteButtonsDiv button:nth-child(2){
-    color: var(--main-color);
-    background-color: white;
-    border: 1px solid var(--main-color);
-  }
-
-  .imgContainer .temperature{
-    font-size: .4rem;
-    color: red;
-  }
-
-  .topBar{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .topBar h3{
-    color: white;
-  }
-
-  .windArrowWrap{
-    display: inline-block;
-    vertical-align: middle;
-  }
-
+    @media (max-width: 430px) {
+      .weatherSpecs {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
   <nav>
     <ul>
       <li><a href="index.html">Início</a></li>
-      <li><a href="stations.html">Sua estação</a></li>
+      <li><a href="stations.html">Suas estações</a></li>
       <li><a href="sobre.html">Sobre</a></li>
     </ul>
   </nav>
 
   <main>
     <section id="first">
-      <h1>Estação</h1>
-   
-      
+      <h1>Dados da estação</h1>
     </section>
+
     <section id="second">
-  <!-- <div class="stationCard">
-    <p>Latitude: <span class="latitude"></span></p>
-    <p>Longitude: <span class="longitude"></span></p>
-    <p>Temperatura: <span class="temperature"></span></p>
-    <p>Umidade: <span class="humidity"></span></p>
-    <p>Pressão: <span class="pressure"></span></p>
-    <p>Vento: <span class="windSpeed"></span></p>
-    <p>Direção: <span class="windDirection"></span></p>
-    <p>Data: <span class="date"></span></p>
-  </div> -->
+      <div class="weatherInfos">
+        <aside class="left">
+          <div class="topBar">
+            <h3>Nome da estação</h3>
+            <i class="bx bxs-trash delete-icon" role="button" tabindex="0" aria-label="Excluir estação"></i>
+          </div>
 
-<div class="weatherInfos">
-  <aside class="left">
-    <div class="topBar">
-      <h3>Nome</h3>
-      <i class='bx bxs-trash'></i>
-    </div>
+          <div class="imgContainer">
+            <img src="./assets/imgs/clouds_bg.jpg" alt="Imagem representando o clima">
+            <h1 class="mainTemperature temperature">--</h1>
+            <p class="mainClock date">--</p>
+          </div>
 
-    <div class="imgContainer">
-      <img src="./assets/imgs/clouds_bg.jpg" alt="">
-      <h1 class="mainTemperature temperature"></h1>
-      <h1 class="mainClock date"></h1>
-    </div>
-
-    <ul class="weatherSpecs">
-      <li><i class='bx bx-wind'></i> Vento <br><span class="windSpeed"></span></li>
-      <li>
-        <img id="humidityImg" class="windArrowWrap" src="./assets/imgs/moderado.png" alt="Nível de umidade" width="22" height="22">
-        Umidade <br><span class="humidity"></span>
-      </li>
-      <li><i class='bx bx-map'></i> Latitude <br><span class="latitude"></span></li>
-      <li><i class='bx bxl-tailwind-css'></i> Pressão <br><span class="pressure"></span></li>
-      <li>
-        <img id="windDirectionImg" class="windArrowWrap" src="./assets/imgs/nordeste.png" alt="Direção do vento" width="22" height="22">
-        Direção <br><span class="windDirection"></span>
-      </li>
-      <li><i class='bx bx-globe'></i> Longitude <br><span class="longitude"></span></li>
-    </ul>
-
-  </aside>
-</div>
-
-</section>
+          <ul class="weatherSpecs">
+            <li>
+              <i class="bx bx-wind"></i> Vento<br>
+              <span class="windSpeed">--</span>
+            </li>
+            <li>
+              <img id="humidityImg" src="./assets/imgs/moderado.png" alt="Nível de umidade" width="22" height="22">
+              Umidade<br>
+              <span class="humidity">--</span>
+            </li>
+            <li>
+              <i class="bx bx-map"></i> Latitude<br>
+              <span class="latitude">--</span>
+            </li>
+            <li>
+              <i class="bx bxl-tailwind-css"></i> Pressão<br>
+              <span class="pressure">--</span>
+            </li>
+            <li>
+              <img id="windDirectionImg" src="./assets/imgs/nordeste.png" alt="Direção do vento" width="22" height="22">
+              Direção<br>
+              <span class="windDirection">--</span>
+            </li>
+            <li>
+              <i class="bx bx-globe"></i> Longitude<br>
+              <span class="longitude">--</span>
+            </li>
+            <li>
+              <i class="bx bx-cloud"></i> CO₂<br>
+              <span class="co2">--</span>
+            </li>
+            <li>
+              <i class="bx bx-chip"></i> TVOC<br>
+              <span class="tvoc">--</span>
+            </li>
+            <li>
+              <i class="bx bx-up-arrow-alt"></i> Altitude<br>
+              <span class="altitude">--</span>
+            </li>
+            <li>
+              <i class="bx bx-sun"></i> Luminosidade<br>
+              <span class="lux">--</span>
+            </li>
+            <li>
+              <i class="bx bx-sun"></i> Índice UV<br>
+              <span class="uvIndex">--</span>
+            </li>
+            <li>
+              <i class="bx bx-sun"></i> Nível UV<br>
+              <span class="uvLevel">--</span>
+            </li>
+            <li>
+              <i class="bx bx-cloud-rain"></i> Nível de chuva<br>
+              <span class="rainLevel">--</span>
+            </li>
+            <li>
+              <i class="bx bx-water"></i> Status da chuva<br>
+              <span class="rain">--</span>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </section>
   </main>
-  <div class="allScreen">
-    <div class="deletePopup">
-    <h2>Deseja realmente apagar?</h2>
-    <p>Após a confirmação, você não será mais capaz de monitorar essa estação.</p>
-    <div class="deleteButtonsDiv">
-      <button onclick="deleteStation()">Apagar</button>
-      <button onclick="cancelDeleteStation()">Não</button>
+
+  <div class="allScreen" aria-hidden="true">
+    <div class="deletePopup" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+      <h2 id="delete-title">Deseja realmente apagar?</h2>
+      <p>Após a confirmação, você não será mais capaz de monitorar essa estação.</p>
+      <div class="deleteButtonsDiv">
+        <button type="button" onclick="deleteStation()">Apagar</button>
+        <button type="button" onclick="cancelDeleteStation()">Não</button>
+      </div>
     </div>
-  </div>
   </div>
 </body>
 </html>

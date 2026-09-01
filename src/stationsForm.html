@@ -1,55 +1,98 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'> 
-  <title>Crie Sua Estação</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+  <title>Crie sua estação</title>
   <script src="./js/stationsForm.js" defer></script>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
     body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100%;
+    }
 
-        background-image: url(../assets/imgs/background.png);
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+    body {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 32px 16px;
+      color: #4a3f35;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-image: url("../assets/imgs/background.png");
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
 
-         display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        color: #4a3f35;
-}
-
-/* fundo ficar escuro no body */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3); /* escurece o fundo */
-  z-index: -1;
-}
+    body::before {
+      position: fixed;
+      z-index: -1;
+      inset: 0;
+      content: "";
+      background: rgba(0, 0, 0, 0.3);
+    }
 
     .form-card {
+      width: min(820px, 100%);
+      padding: 32px;
+      text-align: center;
       background: rgba(255, 255, 255, 0.92);
+      border: 2px solid rgba(255, 255, 255, 0.8);
       border-radius: 30px;
       box-shadow: 0 12px 30px rgba(112, 85, 86, 0.22);
-      padding: 32px;
-      width: min(820px, 80vw);
-      text-align: center;
-      border: 2px solid rgba(255, 255, 255, 0.8);
-      margin-top: 80px;
+    }
+
+    .form-card aside {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
     }
 
     .form-card h1 {
-      margin: 0 0 18px;
+      margin: 0 48px 18px;
       font-size: 1.9rem;
     }
 
-    .form-card p {
+    .close-button {
+      position: absolute;
+      top: -8px;
+      right: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      color: #4a3f35;
+      background: transparent;
+      border: 0;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .close-button:hover,
+    .close-button:focus-visible {
+      background: rgba(31, 58, 196, 0.12);
+      outline: none;
+    }
+
+    .close-button i {
+      font-size: 2.5rem;
+    }
+
+    .form-card > p {
       margin: 0 0 28px;
       color: #738da2;
       line-height: 1.5;
@@ -57,92 +100,155 @@ body::before {
 
     .field-group {
       display: grid;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 8px;
+      margin-bottom: 18px;
+      text-align: left;
     }
 
     label {
-      text-align: left;
       font-weight: 600;
       font-size: 0.95rem;
     }
 
-    input,
-    textarea,
-    select {
+    input {
       width: 100%;
-      padding: 14px 0px;
-      border-radius: 16px;
-      border: 1px solid #1f3ac4;
+      padding: 14px 16px;
+      color: #263238;
+      font: inherit;
       background: #bbc4cfa8;
-      font-size: 1rem;
+      border: 1px solid #1f3ac4;
+      border-radius: 16px;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-
-    input:focus,
-    textarea:focus,
-    select:focus {
-      outline: none;
+    input:focus {
       border-color: #1f3ac4;
-      box-shadow: 0 0 0 4px rgba(234, 127, 146, 0.14);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(31, 58, 196, 0.14);
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 100px;
+    input:invalid:not(:placeholder-shown) {
+      border-color: #b42318;
+    }
+
+    .field-help {
+      margin: 0;
+      color: #667085;
+      font-size: 0.82rem;
     }
 
     .submit-btn {
-      background: #1f3ac4;
-      border: none;
-      color: white;
+      margin-top: 8px;
+      padding: 15px 28px;
+      color: #fff;
+      font: inherit;
       font-weight: 700;
-      padding: 15px 22px;
+      background: #1f3ac4;
+      border: 0;
       border-radius: 20px;
       cursor: pointer;
     }
 
-    .form-card aside{
-      position: relative;
+    .submit-btn:hover,
+    .submit-btn:focus-visible {
+      background: #172d9c;
+      outline: none;
     }
 
-    .form-card aside i{
-      position: absolute;
-      top: 0;
-      right: 10px;
-      font-size: 3rem;
-      cursor: pointer;
+    .submit-btn:disabled {
+      cursor: wait;
+      opacity: 0.65;
     }
 
+    @media (max-width: 600px) {
+      .form-card {
+        padding: 24px 18px;
+        border-radius: 22px;
+      }
+
+      .form-card h1 {
+        font-size: 1.55rem;
+      }
+    }
   </style>
 </head>
 <body>
   <main class="form-card">
     <aside>
-      <h1>Crie Sua Estação </h1> <i class='bx bx-x' onclick="returnToStations()"></i>
+      <h1>Crie sua estação</h1>
+      <button
+        type="button"
+        class="close-button"
+        aria-label="Voltar para a lista de estações"
+        onclick="returnToStations()"
+      >
+        <i class="bx bx-x" aria-hidden="true"></i>
+      </button>
     </aside>
+
     <p>Adicione as informações da sua estação meteorológica.</p>
-    <form id="station-form">
+
+    <form id="station-form" onsubmit="return false;">
       <div class="field-group">
-        <label for="name">Name</label>
-        <input type="text" id="nameInput">
+        <label for="nameInput">Nome da estação</label>
+        <input
+          type="text"
+          id="nameInput"
+          name="name"
+          maxlength="20"
+          autocomplete="organization"
+          placeholder="Ex.: IFF Campos Centro"
+          required
+        >
       </div>
+
       <div class="field-group">
-        <label for="latitude">Latitude</label>
-        <input type="number" id="latitudeInput">
+        <label for="latitudeInput">Latitude</label>
+        <input
+          type="number"
+          id="latitudeInput"
+          name="latitude"
+          min="-90"
+          max="90"
+          step="0.0001"
+          inputmode="decimal"
+          placeholder="Ex.: -21.7618"
+          required
+        >
       </div>
+
       <div class="field-group">
-        <label for="time-stamp">Longitude</label>
-        <input type="number" id="longitudeInput" />
+        <label for="longitudeInput">Longitude</label>
+        <input
+          type="number"
+          id="longitudeInput"
+          name="longitude"
+          min="-180"
+          max="180"
+          step="0.0001"
+          inputmode="decimal"
+          placeholder="Ex.: -41.3393"
+          required
+        >
       </div>
-        <div class="field-group">
-            <label for="time-zone">Time Zone (unix)</label>
-            <input type="number" id="timeZoneInput" name="time-zone">
+
+      <div class="field-group">
+        <label for="timeZoneInput">Fuso horário da estação (offset em segundos)</label>
+        <input
+          type="number"
+          id="timeZoneInput"
+          name="timeZone"
+          min="-43200"
+          max="50400"
+          step="1"
+          inputmode="numeric"
+          placeholder="Ex.: -10800 para UTC-3"
+          required
+        >
+        <p class="field-help">Para o valor do Arduino <code>estacao_UTC: 3</code>, informe <strong>-10800</strong>.</p>
       </div>
-        
-      
-      <button type="submit" class="submit-btn">Enviar</button>
+
+      <button type="submit" class="submit-btn">Cadastrar estação</button>
     </form>
   </main>
 </body>
