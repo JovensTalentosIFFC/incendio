@@ -73,7 +73,8 @@ submitBtn.addEventListener('click', async (event) => {
 
   const stationData = {
     stationId: generateStationId(Number(lat), Number(lon)),
-    userId: String(userId),
+    // userId: String(userId),
+    userId: '',
     name,
     timeZone: Number(timezone),
     timestamp: Math.floor(Date.now() / 1000)

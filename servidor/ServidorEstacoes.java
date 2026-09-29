@@ -95,7 +95,7 @@ public class ServidorEstacoes {
             Double timestamp = numero(body, "timestamp");
             Double timezone = numero(body, "timeZone");
 
-            if (stationId == null || stationId.isBlank() || userId == null || userId.isBlank()) {
+            if (stationId == null || stationId.isBlank()) {
                 responder(exchange, 400, "{\"erro\":\"stationId e userId sao obrigatorios\"}"); return;
             }
 
@@ -210,13 +210,19 @@ public class ServidorEstacoes {
     }
 
     private static void transmitirParaUsuario(String userId) {
-        if (userId == null || userId.isBlank()) return;
-        CopyOnWriteArrayList<HttpExchange> assinantes = assinantesPorUsuario.get(userId);
-        if (assinantes == null) return;
+//        if (userId == null || userId.isBlank()) return;
+//        CopyOnWriteArrayList<HttpExchange> assinantes = assinantesPorUsuario.get(userId);
+//        if (assinantes == null) return;
         String evento = "data: " + listaComoJson(estacoesDoUsuario(userId)) + "\n\n";
-        for (HttpExchange ex : assinantes) {
-            try { enviar(ex, evento); }
-            catch (IOException e) { removerAssinante(userId, ex); }
+//        for (HttpExchange ex : assinantes) {
+//            try { enviar(ex, evento); }
+//            catch (IOException e) { removerAssinante(userId, ex); }
+//        }
+        for (Map.Entry<String, CopyOnWriteArrayList<HttpExchange>> entry : assinantesPorUsuario.entrySet()) {
+            for (HttpExchange ex : entry.getValue()) {
+                try { enviar(ex, evento); }
+                catch (IOException e) { removerAssinante(entry.getKey(), ex); }
+            }
         }
     }
 
@@ -245,9 +251,10 @@ public class ServidorEstacoes {
     }
 
     private static List<Estacao> estacoesDoUsuario(String userId) {
-        List<Estacao> resultado = new ArrayList<>();
-        for (Estacao e : estacoes.values()) if (userId.equals(e.userId)) resultado.add(e);
-        return resultado;
+//        List<Estacao> resultado = new ArrayList<>();
+//        for (Estacao e : estacoes.values()) if (userId.equals(e.userId)) resultado.add(e);
+//        return resultado;
+       	return new ArrayList<>(estacoes.values());
     }
 
     static class Estacao {
