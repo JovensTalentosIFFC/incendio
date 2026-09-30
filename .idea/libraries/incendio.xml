@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="incendio">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/incendio2.zip!/" />
+      <root url="jar://$PROJECT_DIR$/StationsAPI.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
