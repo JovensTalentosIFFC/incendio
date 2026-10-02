@@ -10,15 +10,15 @@ let stations = [];
 let sseConnection = null;
 
 if (!stationsBody) throw new Error('Elemento .stationsManager tbody nao encontrado.');
-if (!MOCK_MODE && !userId) {
-  console.error('userId nao encontrado no localStorage. Redirecionando para o formulario.');
-  window.location.href = 'stationsForm.html';
-}
+// if (!MOCK_MODE && !userId) {
+//   console.error('userId nao encontrado no localStorage. Redirecionando para o formulario.');
+//   window.location.href = 'stationsForm.html';
+// }
 
-createStationButton?.addEventListener('click', (event) => {
-  event.preventDefault();
-  window.location.href = 'stationsForm.html';
-});
+// createStationButton?.addEventListener('click', (event) => {
+//   event.preventDefault();
+//   window.location.href = 'stationsForm.html';
+// });
 
 function formatTimestamp(timestampUnix, timezoneUnix) {
   if (timestampUnix === undefined || timestampUnix === null) return '--';
@@ -124,7 +124,7 @@ async function loadInitialStations() {
     renderStations();
     return;
   }
-  const response = await fetch(`${API_BASE_URL}/stations/byUserId?userId=${encodeURIComponent(userId)}`);
+  const response = await fetch(`${API_BASE_URL}/stations`);
   if (!response.ok) throw new Error(`Falha ao carregar estacoes: HTTP ${response.status}`);
   const data = await response.json();
   if (!Array.isArray(data)) throw new Error('Resposta invalida do backend.');
@@ -135,7 +135,7 @@ async function loadInitialStations() {
 function connectSSE() {
   if (MOCK_MODE) return null;
   if (sseConnection) sseConnection.close();
-  const connection = new EventSource(`${API_BASE_URL}/stations/currentData?userId=${encodeURIComponent(userId)}`);
+  const connection = new EventSource(`${API_BASE_URL}/stations/currentData`);
   sseConnection = connection;
   connection.onopen = () => console.info('SSE conectado.');
   connection.onmessage = (event) => {
@@ -155,15 +155,18 @@ function connectSSE() {
   return connection;
 }
 
-async function start() {
-  try {
-    await loadInitialStations();
+  async function start() {
+    try {
+      await loadInitialStations();
+    } catch (error) {
+      console.error(error);
+      stationsBody.innerHTML =
+        '<tr><td colspan="13">Servidor indisponível. Tentando reconectar...</td></tr>';
+      setTimeout(start, 3000);
+      return;
+    }
     connectSSE();
-  } catch (error) {
-    console.error(error);
-    stationsBody.innerHTML = '<tr><td colspan="13">Nao foi possivel carregar as estacoes.</td></tr>';
   }
-}
 
 start();
 window.addEventListener('beforeunload', () => sseConnection?.close());

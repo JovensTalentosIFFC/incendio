@@ -288,6 +288,42 @@ function criarGrafico(registros) {
     }
   });
 }
+
+
+const API_BASE_URL = 'http://localhost:8080';
+const selectEstacao = document.getElementById('selectEstacao');
+const selectPeriodo = document.getElementById('selectPeriodo');
+
+async function carregarEstacoes() {
+  const resp = await fetch(`${API_BASE_URL}/stations`);
+  const lista = await resp.json();
+
+  lista.forEach((s) => {
+    const opt = document.createElement('option');
+    opt.value = s.station_id;
+    opt.textContent = `${s.name} (${s.station_id})`;
+    selectEstacao.appendChild(opt);
+  });
+
+  if (lista.length) carregarHistorico();
+}
+
+async function carregarHistorico() {
+  const id = encodeURIComponent(selectEstacao.value);
+  const horas = selectPeriodo.value;
+  const resp = await fetch(`${API_BASE_URL}/stations/history?id=${id}&horas=${horas}`);
+  if (!resp.ok) { console.error('Falha ao carregar histórico:', resp.status); return; }
+
+  const registros = await resp.json();
+  values.registros = detectarIncendio(registros);
+  criarGrafico(values.registros);
+}
+
+selectEstacao.addEventListener('change', carregarHistorico);
+selectPeriodo.addEventListener('change', carregarHistorico);
+carregarEstacoes();
+
+
 // Chama a API **somente no início**, fora do criarGrafico
 start();
 

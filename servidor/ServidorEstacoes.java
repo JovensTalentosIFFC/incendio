@@ -96,7 +96,7 @@ public class ServidorEstacoes {
             Double timezone = numero(body, "timeZone");
 
             if (stationId == null || stationId.isBlank()) {
-                responder(exchange, 400, "{\"erro\":\"stationId e userId sao obrigatorios\"}"); return;
+                responder(exchange, 400, "{\"erro\":\"stationId é obrigatorio\"}"); return;
             }
 
             Estacao estacao = estacoes.computeIfAbsent(stationId, Estacao::new);

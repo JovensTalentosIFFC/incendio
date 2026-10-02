@@ -162,58 +162,79 @@ renderStation(normalizeCurrentStation(currentStation));
 // Para as demais estações, usa-se o userId armazenado na estação selecionada.
 // A estação fixa do Arduino está cadastrada para o usuário compartilhado.
 // Igual ao stations.js, esta tela deve consumir o SSE desse usuário.
-const sseUserId = localStorage.getItem('userId') || currentStation.userId;
+// const sseUserId = localStorage.getItem('userId') || currentStation.userId;
 
-if (!sseUserId) {
-  console.error('Não foi possível determinar o userId da estação.');
-} else {
-  const source = new EventSource(
-    `${API_BASE_URL}/stations/currentData?userId=${encodeURIComponent(sseUserId)}`
-  );
+// if (!sseUserId) {
+//   console.error('Não foi possível determinar o userId da estação.');
+// } else {
+//   const source = new EventSource(
+//     `${API_BASE_URL}/stations/currentData?userId=${encodeURIComponent(sseUserId)}`
+//   );
 
-  source.onopen = () => {
-    console.info('SSE da tela de detalhes conectado.');
-  };
+//   source.onopen = () => {
+//     console.info('SSE da tela de detalhes conectado.');
+//   };
 
-  source.onmessage = (event) => {
-    try {
-      const lista = JSON.parse(event.data);
+//   source.onmessage = (event) => {
+//     try {
+//       const lista = JSON.parse(event.data);
 
-      if (!Array.isArray(lista) || lista.length === 0) {
-        console.warn('O SSE não retornou estações; mantendo os dados iniciais.');
-        return;
-      }
+//       if (!Array.isArray(lista) || lista.length === 0) {
+//         console.warn('O SSE não retornou estações; mantendo os dados iniciais.');
+//         return;
+//       }
 
-      // O backend envia a mesma lista usada pelo stations.js.
-      // A estação fixa é o primeiro elemento da lista do usuário "teste".
-      const data = lista[0];
+//       // O backend envia a mesma lista usada pelo stations.js.
+//       // A estação fixa é o primeiro elemento da lista do usuário "teste".
+//       const data = lista[0];
 
-      if (!data) {
-        console.warn('O SSE retornou uma lista vazia.');
-        return;
-      }
+//       if (!data) {
+//         console.warn('O SSE retornou uma lista vazia.');
+//         return;
+//       }
 
-      renderStation(data);
+//       renderStation(data);
 
-      // Mantém o localStorage atualizado para a próxima tela/retorno.
-      localStorage.setItem('currentStation', JSON.stringify({
-        ...currentStation,
-        stationId: data.station_id || selectedStationId,
-        userId: data.user_id || sseUserId,
-        name: data.name
-      }));
-    } catch (error) {
-      console.error('Erro ao interpretar o evento SSE:', error);
-    }
-  };
+//       // Mantém o localStorage atualizado para a próxima tela/retorno.
+//       localStorage.setItem('currentStation', JSON.stringify({
+//         ...currentStation,
+//         stationId: data.station_id || selectedStationId,
+//         userId: data.user_id || sseUserId,
+//         name: data.name
+//       }));
+//     } catch (error) {
+//       console.error('Erro ao interpretar o evento SSE:', error);
+//     }
+//   };
 
-  source.onerror = () => {
-    // Não fechar manualmente: EventSource tenta reconectar automaticamente.
-    console.warn('SSE da tela de detalhes desconectado; aguardando reconexão.');
-  };
+//   source.onerror = () => {
+//     // Não fechar manualmente: EventSource tenta reconectar automaticamente.
+//     console.warn('SSE da tela de detalhes desconectado; aguardando reconexão.');
+//   };
 
-  window.addEventListener('beforeunload', () => source.close());
-}
+//   window.addEventListener('beforeunload', () => source.close());
+// }
+
+const source = new EventSource(`${API_BASE_URL}/stations/currentData`);
+
+source.onopen = () => console.info('SSE da tela de detalhes conectado.');
+
+source.onmessage = (event) => {
+  try {
+    const lista = JSON.parse(event.data);
+    if (!Array.isArray(lista)) return;
+    const data = lista.find((s) => s.station_id === selectedStationId);
+    if (!data) return;
+    renderStation(data);
+  } catch (error) {
+    console.error('Erro ao interpretar o evento SSE:', error);
+  }
+};
+
+source.onerror = () => console.warn('SSE da tela de detalhes desconectado; aguardando reconexão.');
+
+window.addEventListener('beforeunload', () => source.close());
+
 
 const trashButton = document.querySelector('.bx.bxs-trash');
 const allScreen = document.querySelector('.allScreen');

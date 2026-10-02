@@ -13,15 +13,18 @@ import java.util.regex.Pattern;
 
 /**
  * Tela "Crie sua estação" em Swing.
- * Equivalente ao stationsForm.js: valida os campos, gera o stationId
- * a partir de latitude/longitude e faz POST em /stations/add.
+ * Valida os campos, gera o stationId a partir de latitude/longitude
+ * e faz POST em /stations/add.
+ *
+ * O checkbox "Estação virtual" acrescenta "Virtual" ao nome da estação.
+ * O EstacaoVirtual simula dados para as estações cujo nome contém "virtual".
  */
 public class stationsForm extends JFrame {
 
     // Deve apontar para o mesmo servidor (ServidorEstacoes).
     private static final String API_BASE_URL = "http://localhost:8080";
 
-    // No HTML original o userId era enviado vazio.
+    // O servidor ignora o userId: todos veem todas as estações.
     private static final String USER_ID = "";
 
     private static final Color AZUL = new Color(0x1F3AC4);
@@ -35,6 +38,7 @@ public class stationsForm extends JFrame {
     private final JTextField latitudeField = new JTextField();
     private final JTextField longitudeField = new JTextField();
     private final JTextField fusoField = new JTextField();
+    private final JCheckBox virtualCheck = new JCheckBox("Estação virtual (dados simulados)");
     private final JButton cadastrarBtn = new JButton("Cadastrar estação");
 
     // Chamado ao concluir o cadastro ou ao clicar em fechar (ex.: abrir a tela de listagem).
@@ -103,6 +107,21 @@ public class stationsForm extends JFrame {
                 "Ex.: -10800 para UTC-3",
                 "Para o valor do Arduino estacao_UTC: 3, informe -10800."));
 
+        // Checkbox de estação virtual
+        virtualCheck.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        virtualCheck.setForeground(TEXTO);
+        virtualCheck.setOpaque(false);
+        virtualCheck.setFocusPainted(false);
+        virtualCheck.setToolTipText(
+                "Acrescenta \"Virtual\" ao nome; o simulador envia dados para esse tipo de estação.");
+
+        JPanel linhaVirtual = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        linhaVirtual.setOpaque(false);
+        linhaVirtual.setAlignmentX(Component.LEFT_ALIGNMENT);
+        linhaVirtual.setBorder(new EmptyBorder(0, 0, 8, 0));
+        linhaVirtual.add(virtualCheck);
+        form.add(linhaVirtual);
+
         raiz.add(form, BorderLayout.CENTER);
 
         // Botão
@@ -133,8 +152,8 @@ public class stationsForm extends JFrame {
         setContentPane(raiz);
         getRootPane().setDefaultButton(cadastrarBtn); // Enter envia o formulário
 
-        setSize(520, 560);
-        setMinimumSize(new Dimension(460, 520));
+        setSize(520, 620);
+        setMinimumSize(new Dimension(460, 580));
         setLocationRelativeTo(null);
     }
 
@@ -179,6 +198,12 @@ public class stationsForm extends JFrame {
         String latTxt = latitudeField.getText().trim().replace(',', '.');
         String lonTxt = longitudeField.getText().trim().replace(',', '.');
         String fusoTxt = fusoField.getText().trim();
+
+        // Estação virtual: garante "Virtual" no nome, que é o que o simulador procura.
+        if (virtualCheck.isSelected() && !nome.isEmpty()
+                && !nome.toLowerCase(Locale.ROOT).contains("virtual")) {
+            nome = "Virtual " + nome;
+        }
 
         if (!validar(latTxt, lonTxt, fusoTxt, nome)) return;
 
@@ -265,13 +290,14 @@ public class stationsForm extends JFrame {
         }
 
         if (nome.length() > 20) {
-            erro("O nome deve ter no máximo 20 caracteres.");
+            erro("O nome deve ter no máximo 20 caracteres"
+                    + (virtualCheck.isSelected() ? " (o prefixo \"Virtual \" conta)." : "."));
             return false;
         }
         return true;
     }
 
-    /** Mesmo formato do JS: ex. S217618W0413393 */
+    /** Mesmo formato do formulário JS: ex. S217618W413393 */
     private static String gerarStationId(double latitude, double longitude) {
         char latDir = latitude >= 0 ? 'N' : 'S';
         char lonDir = longitude >= 0 ? 'E' : 'W';
