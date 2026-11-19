@@ -122,7 +122,41 @@
       outline: none;
     }
 
+    /* ===== Botão Exportar CSV ===== */
+    #btnCsv {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px 20px;
+      font: inherit;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #fff;
+      background-color: rgb(112, 204, 194);
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
 
+    #btnCsv i {
+      font-size: 1.3rem;
+    }
+
+    #btnCsv:hover,
+    #btnCsv:focus-visible {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      outline: none;
+    }
+
+    #btnCsv:active {
+      transform: translateY(0);
+    }
+
+    /* ===== Popup de exclusão ===== */
     .allScreen {
       position: fixed;
       z-index: 9999;
@@ -154,7 +188,6 @@
       background: #fff;
       border-radius: 10px;
     }
-    
 
     .deletePopup h2,
     .deletePopup p {
@@ -288,6 +321,10 @@
               <span class="rain">--</span>
             </li>
           </ul>
+
+          <button id="btnCsv" type="button">
+            <i class="bx bx-download"></i> Exportar CSV
+          </button>
         </aside>
       </div>
     </section>
@@ -303,5 +340,53 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function exportarCSV() {
+      const campos = [
+        ["Estação", ".topBar h3"],
+        ["Temperatura", ".mainTemperature"],
+        ["Data/Hora", ".mainClock"],
+        ["Vento", ".windSpeed"],
+        ["Direção do vento", ".windDirection"],
+        ["Umidade", ".humidity"],
+        ["Pressão", ".pressure"],
+        ["Latitude", ".latitude"],
+        ["Longitude", ".longitude"],
+        ["Altitude", ".altitude"],
+        ["CO2", ".co2"],
+        ["TVOC", ".tvoc"],
+        ["Luminosidade", ".lux"],
+        ["Índice UV", ".uvIndex"],
+        ["Nível UV", ".uvLevel"],
+        ["Nível de chuva", ".rainLevel"],
+        ["Status da chuva", ".rain"]
+      ];
+
+      const escapar = (v) => {
+        const s = String(v ?? "").trim();
+        return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+
+      const valores = campos.map(([, seletor]) => {
+        const el = document.querySelector(seletor);
+        return escapar(el ? el.textContent : "");
+      });
+
+      const cabecalho = campos.map(([nome]) => escapar(nome)).join(";");
+      // \uFEFF (BOM) faz o Excel abrir os acentos corretamente
+      const csv = "\uFEFF" + cabecalho + "\n" + valores.join(";");
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `estacao_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("btnCsv").addEventListener("click", exportarCSV);
+  </script>
 </body>
 </html>
