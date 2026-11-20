@@ -122,13 +122,34 @@
       outline: none;
     }
 
-    /* ===== Botão Exportar CSV ===== */
+    /* ===== Exportar CSV (período + botão) ===== */
+    .csvBox {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    #csvPeriodo {
+      padding: 0 12px;
+      font: inherit;
+      color: #fff;
+      background-color: rgb(90, 147, 193);
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #csvPeriodo option {
+      color: #000;
+      background-color: #fff;
+    }
+
     #btnCsv {
       display: flex;
+      flex: 1;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      width: 100%;
       padding: 12px 20px;
       font: inherit;
       font-weight: 600;
@@ -154,6 +175,12 @@
 
     #btnCsv:active {
       transform: translateY(0);
+    }
+
+    #btnCsv:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: none;
     }
 
     /* ===== Popup de exclusão ===== */
@@ -234,159 +261,154 @@
 </head>
 
 <body>
-  <nav>
-    <ul>
-      <li><a href="index.html">Início</a></li>
-      <li><a href="stations.html">Suas estações</a></li>
-      <li><a href="sobre.html">Sobre</a></li>
-    </ul>
-  </nav>
+<nav>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="stations.html">Suas estações</a></li>
+    <li><a href="sobre.html">Sobre</a></li>
+  </ul>
+</nav>
 
-  <main>
-    <section id="first">
-      <h1>Dados da estação</h1>
-    </section>
+<main>
+  <section id="first">
+    <h1>Dados da estação</h1>
+  </section>
 
-    <section id="second">
-      <div class="weatherInfos">
-        <aside class="left">
-          <div class="topBar">
-            <h3>Nome da estação</h3>
-            <i class="bx bxs-trash delete-icon" role="button" tabindex="0" aria-label="Excluir estação"></i>
-          </div>
+  <section id="second">
+    <div class="weatherInfos">
+      <aside class="left">
+        <div class="topBar">
+          <h3>Nome da estação</h3>
+          <i class="bx bxs-trash delete-icon" role="button" tabindex="0" aria-label="Excluir estação"></i>
+        </div>
 
-          <div class="imgContainer">
-            <img src="./assets/imgs/clouds_bg.jpg" alt="Imagem representando o clima">
-            <h1 class="mainTemperature temperature">--</h1>
-            <p class="mainClock date">--</p>
-          </div>
+        <div class="imgContainer">
+          <img src="./assets/imgs/clouds_bg.jpg" alt="Imagem representando o clima">
+          <h1 class="mainTemperature temperature">--</h1>
+          <p class="mainClock date">--</p>
+        </div>
 
-          <ul class="weatherSpecs">
-            <li>
-              <i class="bx bx-wind"></i> Vento<br>
-              <span class="windSpeed">--</span>
-            </li>
-            <li>
-              <img id="humidityImg" src="./assets/imgs/moderado.png" alt="Nível de umidade" width="22" height="22">
-              Umidade<br>
-              <span class="humidity">--</span>
-            </li>
-            <li>
-              <i class="bx bx-map"></i> Latitude<br>
-              <span class="latitude">--</span>
-            </li>
-            <li>
-              <i class="bx bxl-tailwind-css"></i> Pressão<br>
-              <span class="pressure">--</span>
-            </li>
-            <li>
-              <img id="windDirectionImg" src="./assets/imgs/nordeste.png" alt="Direção do vento" width="22" height="22">
-              Direção<br>
-              <span class="windDirection">--</span>
-            </li>
-            <li>
-              <i class="bx bx-globe"></i> Longitude<br>
-              <span class="longitude">--</span>
-            </li>
-            <li>
-              <i class="bx bx-cloud"></i> CO₂<br>
-              <span class="co2">--</span>
-            </li>
-            <li>
-              <i class="bx bx-chip"></i> TVOC<br>
-              <span class="tvoc">--</span>
-            </li>
-            <li>
-              <i class="bx bx-up-arrow-alt"></i> Altitude<br>
-              <span class="altitude">--</span>
-            </li>
-            <li>
-              <i class="bx bx-sun"></i> Luminosidade<br>
-              <span class="lux">--</span>
-            </li>
-            <li>
-              <i class="bx bx-sun"></i> Índice UV<br>
-              <span class="uvIndex">--</span>
-            </li>
-            <li>
-              <i class="bx bx-sun"></i> Nível UV<br>
-              <span class="uvLevel">--</span>
-            </li>
-            <li>
-              <i class="bx bx-cloud-rain"></i> Nível de chuva<br>
-              <span class="rainLevel">--</span>
-            </li>
-            <li>
-              <i class="bx bx-water"></i> Status da chuva<br>
-              <span class="rain">--</span>
-            </li>
-          </ul>
+        <ul class="weatherSpecs">
+          <li>
+            <i class="bx bx-wind"></i> Vento<br>
+            <span class="windSpeed">--</span>
+          </li>
+          <li>
+            <img id="humidityImg" src="./assets/imgs/moderado.png" alt="Nível de umidade" width="22" height="22">
+            Umidade<br>
+            <span class="humidity">--</span>
+          </li>
+          <li>
+            <i class="bx bx-map"></i> Latitude<br>
+            <span class="latitude">--</span>
+          </li>
+          <li>
+            <i class="bx bxl-tailwind-css"></i> Pressão<br>
+            <span class="pressure">--</span>
+          </li>
+          <li>
+            <img id="windDirectionImg" src="./assets/imgs/nordeste.png" alt="Direção do vento" width="22" height="22">
+            Direção<br>
+            <span class="windDirection">--</span>
+          </li>
+          <li>
+            <i class="bx bx-globe"></i> Longitude<br>
+            <span class="longitude">--</span>
+          </li>
+          <li>
+            <i class="bx bx-cloud"></i> CO₂<br>
+            <span class="co2">--</span>
+          </li>
+          <li>
+            <i class="bx bx-chip"></i> TVOC<br>
+            <span class="tvoc">--</span>
+          </li>
+          <li>
+            <i class="bx bx-up-arrow-alt"></i> Altitude<br>
+            <span class="altitude">--</span>
+          </li>
+          <li>
+            <i class="bx bx-sun"></i> Luminosidade<br>
+            <span class="lux">--</span>
+          </li>
+          <li>
+            <i class="bx bx-sun"></i> Índice UV<br>
+            <span class="uvIndex">--</span>
+          </li>
+          <li>
+            <i class="bx bx-sun"></i> Nível UV<br>
+            <span class="uvLevel">--</span>
+          </li>
+          <li>
+            <i class="bx bx-cloud-rain"></i> Nível de chuva<br>
+            <span class="rainLevel">--</span>
+          </li>
+          <li>
+            <i class="bx bx-water"></i> Status da chuva<br>
+            <span class="rain">--</span>
+          </li>
+        </ul>
 
+        <div class="csvBox">
+          <select id="csvPeriodo" aria-label="Período do CSV">
+            <option value="1">Últimas 24 horas</option>
+            <option value="7">Últimos 7 dias</option>
+            <option value="30" selected>Último mês</option>
+            <option value="90">Últimos 3 meses</option>
+          </select>
           <button id="btnCsv" type="button">
             <i class="bx bx-download"></i> Exportar CSV
           </button>
-        </aside>
-      </div>
-    </section>
-  </main>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
 
-  <div class="allScreen" aria-hidden="true">
-    <div class="deletePopup" role="dialog" aria-modal="true" aria-labelledby="delete-title">
-      <h2 id="delete-title">Deseja realmente apagar?</h2>
-      <p>Após a confirmação, você não será mais capaz de monitorar essa estação.</p>
-      <div class="deleteButtonsDiv">
-        <button type="button" onclick="deleteStation()">Apagar</button>
-        <button type="button" onclick="cancelDeleteStation()">Não</button>
-      </div>
+<div class="allScreen" aria-hidden="true">
+  <div class="deletePopup" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <h2 id="delete-title">Deseja realmente apagar?</h2>
+    <p>Após a confirmação, você não será mais capaz de monitorar essa estação.</p>
+    <div class="deleteButtonsDiv">
+      <button type="button" onclick="deleteStation()">Apagar</button>
+      <button type="button" onclick="cancelDeleteStation()">Não</button>
     </div>
   </div>
+</div>
 
-  <script>
-    function exportarCSV() {
-      const campos = [
-        ["Estação", ".topBar h3"],
-        ["Temperatura", ".mainTemperature"],
-        ["Data/Hora", ".mainClock"],
-        ["Vento", ".windSpeed"],
-        ["Direção do vento", ".windDirection"],
-        ["Umidade", ".humidity"],
-        ["Pressão", ".pressure"],
-        ["Latitude", ".latitude"],
-        ["Longitude", ".longitude"],
-        ["Altitude", ".altitude"],
-        ["CO2", ".co2"],
-        ["TVOC", ".tvoc"],
-        ["Luminosidade", ".lux"],
-        ["Índice UV", ".uvIndex"],
-        ["Nível UV", ".uvLevel"],
-        ["Nível de chuva", ".rainLevel"],
-        ["Status da chuva", ".rain"]
-      ];
+<script>
+  // Usa API_BASE_URL e selectedStationId, que já são definidos no stationsData.js
+  async function exportarCSV() {
+    const botao = document.getElementById("btnCsv");
+    const dias = document.getElementById("csvPeriodo").value;
 
-      const escapar = (v) => {
-        const s = String(v ?? "").trim();
-        return /[";\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-      };
+    botao.disabled = true;
+    try {
+      const resp = await fetch(
+              `${API_BASE_URL}/stations/export?id=${encodeURIComponent(selectedStationId)}&dias=${dias}`
+      );
 
-      const valores = campos.map(([, seletor]) => {
-        const el = document.querySelector(seletor);
-        return escapar(el ? el.textContent : "");
-      });
+      if (!resp.ok) {
+        alert("Ainda não há dados gravados para esta estação.");
+        return;
+      }
 
-      const cabecalho = campos.map(([nome]) => escapar(nome)).join(";");
-      // \uFEFF (BOM) faz o Excel abrir os acentos corretamente
-      const csv = "\uFEFF" + cabecalho + "\n" + valores.join(";");
-
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const blob = await resp.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `estacao_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}.csv`;
+      a.download = `estacao_${selectedStationId}_${dias}dias.csv`;
       a.click();
       URL.revokeObjectURL(url);
+    } catch (erro) {
+      console.error(erro);
+      alert("Não foi possível conectar ao servidor.");
+    } finally {
+      botao.disabled = false;
     }
+  }
 
-    document.getElementById("btnCsv").addEventListener("click", exportarCSV);
-  </script>
+  document.getElementById("btnCsv").addEventListener("click", exportarCSV);
+</script>
 </body>
 </html>

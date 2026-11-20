@@ -1,0 +1,4 @@
+﻿timestamp_unix;data_hora;estacao_id;nome;temperatura_c;umidade_pct;pressao_hpa;co2_ppm;tvoc_ppb;altitude_m;lux;indice_uv;nivel_uv;nivel_chuva;chovendo;vento_ms;direcao_vento_graus
+1795212258;2026-11-20 19:04:18;1;virtual;30,96;53,97;1012,05;619,90;197,39;5,00;309,27;4,25;Moderado;Sem chuva;Nao chovendo;2,35;8
+1795212319;2026-11-20 19:05:19;1;virtual;31,57;79,71;1014,18;539,63;196,78;5,00;1293,01;8,37;Muito alto;Sem chuva;Nao chovendo;7,78;229
+1795212379;2026-11-20 19:06:19;1;virtual;30,37;56,54;1009,02;401,29;124,84;5,00;850,92;8,50;Muito alto;Chuva;Chovendo;1,81;213

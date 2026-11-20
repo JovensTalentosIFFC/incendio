@@ -57,7 +57,7 @@ function formatDate(timestampUnix, timezoneUnix) {
   const pad = (value) => String(value).padStart(2, '0');
 
   return `${pad(date.getUTCDate())}/${pad(date.getUTCMonth() + 1)}/${date.getUTCFullYear()} `
-    + `${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(date.getUTCSeconds())}`;
+      + `${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(date.getUTCSeconds())}`;
 }
 
 function updateHumidityImage(humidity) {
@@ -119,8 +119,8 @@ function renderStation(data) {
 
   const windDirection = getWindDirection(data.wind_direction_deg);
   const windText = Number.isFinite(Number(data.wind_direction_deg))
-    ? `${formatNumber(data.wind_direction_deg, 0, '°')} (${windDirection.label})`
-    : '--';
+      ? `${formatNumber(data.wind_direction_deg, 0, '°')} (${windDirection.label})`
+      : '--';
   setText(windText, '.windDirection');
 
   updateHumidityImage(data.humidity_pct);
@@ -215,7 +215,10 @@ renderStation(normalizeCurrentStation(currentStation));
 //   window.addEventListener('beforeunload', () => source.close());
 // }
 
-const source = new EventSource(`${API_BASE_URL}/stations/currentData`);
+// O servidor exige o parametro userId (sem ele responde 400). Como ele devolve a lista
+// de todas as estacoes, o valor so precisa nao estar vazio.
+const sseUserId = currentStation.userId || currentStation.user_id || localStorage.getItem('userId') || FIXED_STATION_USER_ID;
+const source = new EventSource(`${API_BASE_URL}/stations/currentData?userId=${encodeURIComponent(sseUserId)}`);
 
 source.onopen = () => console.info('SSE da tela de detalhes conectado.');
 
@@ -246,8 +249,8 @@ trashButton?.addEventListener('click', () => {
 async function deleteStation() {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/stations/delete?id=${encodeURIComponent(selectedStationId)}`,
-      { method: 'DELETE' }
+        `${API_BASE_URL}/stations/delete?id=${encodeURIComponent(selectedStationId)}`,
+        { method: 'DELETE' }
     );
 
     if (!response.ok) {

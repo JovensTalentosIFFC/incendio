@@ -19,22 +19,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.PreparedStatement;
 
 public class ServidorEstacoes {
     private static final int PORTA = 8080;
-    private static final String URL_BANCO = "jdbc:mysql://localhost:3306/feira_ciencia";
-    private static final String USUARIO_BANCO = "root";
-    private static final String SENHA_BANCO = "root";
     private static final Map<String, Estacao> estacoes = new ConcurrentHashMap<>();
     private static final Map<String, CopyOnWriteArrayList<HttpExchange>> assinantesPorUsuario = new ConcurrentHashMap<>();
     private static final ScheduledExecutorService heartbeat = Executors.newSingleThreadScheduledExecutor();
 
     public static void main(String[] args) throws IOException {
-    	testarBanco();
         HttpServer servidor = HttpServer.create(new InetSocketAddress(PORTA), 0);
         servidor.setExecutor(Executors.newCachedThreadPool());
 
@@ -44,6 +36,7 @@ public class ServidorEstacoes {
         servidor.createContext("/stations", new ListarTodasHandler());
         servidor.createContext("/stations/byUserId", new ListarPorUsuarioHandler());
         servidor.createContext("/stations/currentData", new StreamPorUsuarioHandler());
+        servidor.createContext("/stations/export", new ExportacaoCsv.ExportarHandler());
 
         heartbeat.scheduleAtFixedRate(ServidorEstacoes::enviarHeartbeats, 20, 20, TimeUnit.SECONDS);
         servidor.start();
@@ -51,6 +44,7 @@ public class ServidorEstacoes {
         System.out.println("Servidor de estacoes iniciado na porta " + PORTA);
         System.out.println("POST Arduino: http://0.0.0.0:" + PORTA + "/api/estacao");
         System.out.println("SSE: http://<ip-do-servidor>:" + PORTA + "/stations/currentData?userId=SEU_ID");
+        System.out.println("CSV: http://<ip-do-servidor>:" + PORTA + "/stations/export?id=ID_DA_ESTACAO&dias=30");
     }
 
     static class ReceberEstacaoHandler implements HttpHandler {
@@ -70,7 +64,7 @@ public class ServidorEstacoes {
             Estacao estacao = estacoes.computeIfAbsent(stationId, Estacao::new);
             // A telemetria nao pode alterar o dono da estacao. O userId vem do cadastro.
             atualizarEstacao(estacao, json, false);
-            salvarLeituraNoBanco(estacao);
+            ExportacaoCsv.salvar(estacao);
             transmitirParaUsuario(estacao.userId);
 
             String resposta = String.format(Locale.US,
@@ -254,7 +248,7 @@ public class ServidorEstacoes {
 //        List<Estacao> resultado = new ArrayList<>();
 //        for (Estacao e : estacoes.values()) if (userId.equals(e.userId)) resultado.add(e);
 //        return resultado;
-       	return new ArrayList<>(estacoes.values());
+        return new ArrayList<>(estacoes.values());
     }
 
     static class Estacao {
@@ -282,10 +276,10 @@ public class ServidorEstacoes {
 
     private static String estacaoParaJson(Estacao e) {
         return String.format(Locale.US,
-            "{\"station_id\":\"%s\",\"user_id\":\"%s\",\"name\":\"%s\",\"timestamp_unix\":%d,\"timezone_unix\":%d,\"temperature_c\":%.2f,\"humidity_pct\":%.2f,\"pressure_hpa\":%.2f,\"co2_ppm\":%.2f,\"tvoc_ppb\":%.2f,\"altitude_m\":%.2f,\"lux\":%.2f,\"uv_index\":%.2f,\"uv_level\":\"%s\",\"rain_level\":\"%s\",\"is_raining\":%b,\"wind_speed_ms\":%.2f,\"wind_direction_deg\":%d}",
-            escaparJson(e.stationId), escaparJson(e.userId), escaparJson(e.name), e.timestampUnix, e.timezoneUnix,
-            e.temperatureC, e.humidityPct, e.pressureHpa, e.co2Ppm, e.tvocPpb, e.altitudeM, e.lux, e.uvIndex,
-            escaparJson(e.uvLevel), escaparJson(e.rainLevel), e.isRaining, e.windSpeedMs, e.windDirectionDeg);
+                "{\"station_id\":\"%s\",\"user_id\":\"%s\",\"name\":\"%s\",\"timestamp_unix\":%d,\"timezone_unix\":%d,\"temperature_c\":%.2f,\"humidity_pct\":%.2f,\"pressure_hpa\":%.2f,\"co2_ppm\":%.2f,\"tvoc_ppb\":%.2f,\"altitude_m\":%.2f,\"lux\":%.2f,\"uv_index\":%.2f,\"uv_level\":\"%s\",\"rain_level\":\"%s\",\"is_raining\":%b,\"wind_speed_ms\":%.2f,\"wind_direction_deg\":%d}",
+                escaparJson(e.stationId), escaparJson(e.userId), escaparJson(e.name), e.timestampUnix, e.timezoneUnix,
+                e.temperatureC, e.humidityPct, e.pressureHpa, e.co2Ppm, e.tvocPpb, e.altitudeM, e.lux, e.uvIndex,
+                escaparJson(e.uvLevel), escaparJson(e.rainLevel), e.isRaining, e.windSpeedMs, e.windDirectionDeg);
     }
 
     private static String lerCorpo(HttpExchange e) throws IOException {
@@ -351,63 +345,6 @@ public class ServidorEstacoes {
         e.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
         e.sendResponseHeaders(status, bytes.length);
         try (OutputStream out = e.getResponseBody()) { out.write(bytes); }
-    }
-    
-    private static Connection conectarBanco() throws SQLException {
-        return DriverManager.getConnection(
-            URL_BANCO,
-            USUARIO_BANCO,
-            SENHA_BANCO
-        );
-    }
-    
-    private static void testarBanco() {
-        try (Connection conn = conectarBanco()) {
-            System.out.println("Conexao com o MySQL realizada com sucesso!");
-        } catch (SQLException e) {
-            System.out.println("Erro ao conectar ao MySQL:");
-            e.printStackTrace();
-        }
-    }
-    
-    private static void salvarLeituraNoBanco(Estacao e) {
-        String sql =
-            "INSERT INTO leituras (" +
-            "estacao_id, user_id, nome, timestamp_unix, timezone_unix, " +
-            "temperatura, umidade, pressao, co2, tvoc, altitude, lux, indice_uv, " +
-            "nivel_uv, nivel_chuva, digital_chuva, intens_vento, direcao_vento" +
-            ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = conectarBanco();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, e.stationId);
-            stmt.setString(2, e.userId);
-            stmt.setString(3, e.name);
-            stmt.setLong(4, e.timestampUnix);
-            stmt.setInt(5, e.timezoneUnix);
-            stmt.setDouble(6, e.temperatureC);
-            stmt.setDouble(7, e.humidityPct);
-            stmt.setDouble(8, e.pressureHpa);
-            stmt.setDouble(9, e.co2Ppm);
-            stmt.setDouble(10, e.tvocPpb);
-            stmt.setDouble(11, e.altitudeM);
-            stmt.setDouble(12, e.lux);
-            stmt.setDouble(13, e.uvIndex);
-            stmt.setString(14, e.uvLevel);
-            stmt.setString(15, e.rainLevel);
-            stmt.setString(16, e.isRaining ? "Chovendo" : "Nao chovendo");
-            stmt.setDouble(17, e.windSpeedMs);
-            stmt.setInt(18, e.windDirectionDeg);
-
-            stmt.executeUpdate();
-
-            System.out.println("Leitura salva no MySQL: " + e.stationId);
-
-        } catch (SQLException ex) {
-            System.out.println("Erro ao salvar leitura no MySQL:");
-            ex.printStackTrace();
-        }
     }
 }
 
