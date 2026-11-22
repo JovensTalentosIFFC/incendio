@@ -25,7 +25,7 @@ public class stationsForm extends JFrame {
     private static final String API_BASE_URL = "http://localhost:8080";
 
     // O servidor ignora o userId: todos veem todas as estações.
-    private static final String USER_ID = "";
+    private static final String USER_ID = "virtual";
 
     private static final Color AZUL = new Color(0x1F3AC4);
     private static final Color AZUL_ESCURO = new Color(0x172D9C);

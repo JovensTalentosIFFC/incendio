@@ -2,23 +2,19 @@
 const API_BASE_URL = 'http://localhost:8080';
 const MOCK_MODE = false; // false para usar o backend real
 const MOCK_USER_ID = 'mock-user';
+const FALLBACK_USER_ID = 'teste'; // usado quando a estacao nao tem userId (o servidor exige nao vazio)
+const SSE_RETRY_MS = 3000;
 
-const userId = localStorage.getItem('userId');
 const createStationButton = document.querySelector('#criar');
 const stationsBody = document.querySelector('.stationsManager tbody');
-let stations = [];
-let sseConnection = null;
+
+// Estado: todas as estacoes por stationId (mantem a ordem de insercao).
+const stationsById = new Map();
+// Uma conexao SSE por userId, igual ao stationsData.js (que usa o userId da propria estacao).
+const sseConnections = new Map(); // userId -> EventSource
+const sseRetryTimers = new Map(); // userId -> timeout
 
 if (!stationsBody) throw new Error('Elemento .stationsManager tbody nao encontrado.');
-// if (!MOCK_MODE && !userId) {
-//   console.error('userId nao encontrado no localStorage. Redirecionando para o formulario.');
-//   window.location.href = 'stationsForm.html';
-// }
-
-// createStationButton?.addEventListener('click', (event) => {
-//   event.preventDefault();
-//   window.location.href = 'stationsForm.html';
-// });
 
 function formatTimestamp(timestampUnix, timezoneUnix) {
   if (timestampUnix === undefined || timestampUnix === null) return '--';
@@ -58,7 +54,7 @@ function number(value, digits, suffix) {
 
 function renderStations() {
   stationsBody.innerHTML = '';
-  stations.forEach((station) => {
+  stationsById.forEach((station) => {
     const tr = document.createElement('tr');
     tr.className = 'stationCard';
     tr.dataset.stationId = station.stationId;
@@ -91,15 +87,27 @@ function preencherLinha(row, station) {
   row.querySelector('.stationTimestamp').textContent = formatTimestamp(station.timestampUnix, station.timezoneUnix);
 }
 
-function sameStationSet(current, next) {
-  if (current.length !== next.length) return false;
-  const ids = new Set(current.map((station) => station.stationId));
-  return next.every((station) => ids.has(station.stationId));
+function findRow(stationId) {
+  return stationsBody.querySelector(`tr.stationCard[data-station-id="${CSS.escape(stationId)}"]`);
 }
 
-function updateStationsInPlace(nextStations) {
-  nextStations.forEach((station) => {
-    const row = stationsBody.querySelector(`tr.stationCard[data-station-id="${CSS.escape(station.stationId)}"]`);
+// Insere/atualiza estacoes vindas do servidor. So redesenha a tabela se aparecer
+// uma estacao nova; caso contrario, atualiza as celulas das linhas existentes.
+function upsertStations(list) {
+  let hasNew = false;
+  list.forEach((station) => {
+    if (!station.stationId) return;
+    if (!stationsById.has(station.stationId)) hasNew = true;
+    stationsById.set(station.stationId, station);
+  });
+
+  if (hasNew) {
+    renderStations();
+    return;
+  }
+
+  list.forEach((station) => {
+    const row = findRow(station.stationId);
     if (row) preencherLinha(row, station);
   });
 }
@@ -107,7 +115,7 @@ function updateStationsInPlace(nextStations) {
 stationsBody.addEventListener('click', (event) => {
   const row = event.target.closest('tr.stationCard');
   if (!row) return;
-  const station = stations.find((item) => item.stationId === row.dataset.stationId);
+  const station = stationsById.get(row.dataset.stationId);
   if (station) {
     localStorage.setItem('currentStation', JSON.stringify(station));
     window.location.href = 'stationsData.html';
@@ -120,53 +128,81 @@ const mockStations = [
 
 async function loadInitialStations() {
   if (MOCK_MODE) {
-    stations = mockStations.map(mapStation);
-    renderStations();
+    upsertStations(mockStations.map(mapStation));
     return;
   }
   const response = await fetch(`${API_BASE_URL}/stations`);
   if (!response.ok) throw new Error(`Falha ao carregar estacoes: HTTP ${response.status}`);
   const data = await response.json();
   if (!Array.isArray(data)) throw new Error('Resposta invalida do backend.');
-  stations = data.map(mapStation);
-  renderStations();
+  upsertStations(data.map(mapStation));
 }
 
-function connectSSE() {
-  if (MOCK_MODE) return null;
-  if (sseConnection) sseConnection.close();
-  const connection = new EventSource(`${API_BASE_URL}/stations/currentData`);
-  sseConnection = connection;
-  connection.onopen = () => console.info('SSE conectado.');
+// ---------- SSE ----------
+
+function connectSSE(sseUserId) {
+  clearTimeout(sseRetryTimers.get(sseUserId));
+  sseConnections.get(sseUserId)?.close();
+
+  const connection = new EventSource(
+    `${API_BASE_URL}/stations/currentData?userId=${encodeURIComponent(sseUserId)}`
+  );
+  sseConnections.set(sseUserId, connection);
+
+  connection.onopen = () => console.info(`SSE conectado (userId="${sseUserId}").`);
+
   connection.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
       if (!Array.isArray(data)) throw new Error('Evento SSE nao contem uma lista.');
-      const nextStations = data.map(mapStation);
-      const updateInPlace = sameStationSet(stations, nextStations);
-      stations = nextStations;
-      if (updateInPlace) updateStationsInPlace(nextStations);
-      else renderStations();
+      console.debug(`SSE userId="${sseUserId}": ${data.length} estacao(oes)`);
+      if (data.length === 0) return; // nunca apaga a tela por causa de uma lista vazia
+      upsertStations(data.map(mapStation));
+      ensureConnections(); // se apareceu um userId novo, abre a conexao dele
     } catch (error) {
       console.error('Evento SSE invalido:', error);
     }
   };
-  connection.onerror = () => console.warn('SSE desconectado; o navegador tentara reconectar.');
-  return connection;
+
+  connection.onerror = () => {
+    // CONNECTING: o navegador reconecta sozinho. CLOSED: o servidor recusou
+    // ou estava fora do ar ao abrir, entao reconectamos manualmente.
+    if (connection.readyState === EventSource.CLOSED) {
+      console.warn(`SSE fechado (userId="${sseUserId}"); tentando reconectar...`);
+      sseRetryTimers.set(sseUserId, setTimeout(() => connectSSE(sseUserId), SSE_RETRY_MS));
+    }
+  };
 }
 
-  async function start() {
-    try {
-      await loadInitialStations();
-    } catch (error) {
-      console.error(error);
-      stationsBody.innerHTML =
-        '<tr><td colspan="13">Servidor indisponível. Tentando reconectar...</td></tr>';
-      setTimeout(start, 3000);
-      return;
-    }
-    connectSSE();
+// Abre uma conexao para cada userId presente nas estacoes (ou o fallback se nao houver nenhum).
+function ensureConnections() {
+  if (MOCK_MODE) return;
+
+  const ids = new Set();
+  stationsById.forEach((station) => ids.add(station.userId || FALLBACK_USER_ID));
+  if (ids.size === 0) ids.add(FALLBACK_USER_ID);
+
+  ids.forEach((id) => {
+    if (!sseConnections.has(id)) connectSSE(id);
+  });
+}
+
+async function start() {
+  try {
+    await loadInitialStations();
+  } catch (error) {
+    console.error(error);
+    stationsBody.innerHTML =
+      '<tr><td colspan="13">Servidor indisponível. Tentando reconectar...</td></tr>';
+    setTimeout(start, 3000);
+    return;
   }
+  ensureConnections();
+}
 
 start();
-window.addEventListener('beforeunload', () => sseConnection?.close());
+
+window.addEventListener('beforeunload', () => {
+  sseRetryTimers.forEach((timer) => clearTimeout(timer));
+  sseConnections.forEach((connection) => connection.close());
+});
